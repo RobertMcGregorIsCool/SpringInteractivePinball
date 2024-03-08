@@ -23,22 +23,38 @@ public:
 	void run();
 
 private:
+	void setup();
+	void setupFontAndText();
+	void setupScoreBoard();
+	void setupSprite();
+	
+	void render();
+
+	void update(sf::Time t_deltaTime);
 
 	void processEvents();
 	void processKeys(sf::Event t_event);
-	void update(sf::Time t_deltaTime);
-	void render();
-	
-	void setup();
-	void setupFontAndText();
-	void setupSprite();
+	void processMouseDown(sf::Event t_event);
+	void processMouseUp(sf::Event t_event);	
+
+	void mouseScreenPosition(sf::Event t_event);
 
 	const unsigned int WIDTH = 600U;
 	const unsigned int HEIGHT = 1016U;
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
-	Ball ball;
+	sf::Text m_ScoreBoard;
+
+	int m_mouseXCur = 0;
+	int m_mouseYCur = 0;
+
+	sf::Vector2f m_mouseDown;//location of mouse down click
+
+	Ball balls[4] = {	Ball(16.0f, sf::Vector2f(300.0f, 500.0f)),
+						Ball(16.0f, sf::Vector2f(300.0f, 500.0f)),
+						Ball(16.0f, sf::Vector2f(300.0f, 500.0f)),
+						Ball(16.0f, sf::Vector2f(300.0f, 500.0f))};
 	bool m_exitGame; // control exiting game
 
 };

@@ -76,6 +76,15 @@ void Game::processEvents()
 		{
 			processKeys(newEvent);
 		}
+		if (sf::Event::MouseButtonPressed == newEvent.type)
+		{
+			processMouseDown(newEvent);
+		}
+		if (sf::Event::MouseButtonReleased == newEvent.type)
+		{
+			processMouseUp(newEvent);
+		}
+		mouseScreenPosition(newEvent);
 	}
 }
 
@@ -92,6 +101,39 @@ void Game::processKeys(sf::Event t_event)
 	}
 }
 
+void Game::processMouseDown(sf::Event t_event)
+{
+	std::cout << "Clicky!";
+
+	m_mouseDown.x = static_cast<float>(t_event.mouseButton.x);
+	m_mouseDown.y = static_cast<float>(t_event.mouseButton.y);
+}
+
+void Game::processMouseUp(sf::Event t_event)
+{
+	std::cout << "Unclicky!";
+
+	sf::Vector2f mouseUp;
+	sf::Vector2f displacement;
+	float headingD;
+	float headingR;
+
+	mouseUp.x = static_cast<float>(t_event.mouseButton.x);
+	mouseUp.y = static_cast<float>(t_event.mouseButton.y);
+
+	displacement = mouseUp - m_mouseDown;
+	headingR = std::atan2f(displacement.y, displacement.x);
+	/*headingD = headingR * 180.0f / M_PI;
+	headingD = headingD + 90.0f;
+
+	if (sf::Mouse::Left == t_event.mouseButton.button)
+	{
+		m_bigHeading = headingD;
+		m_bigPlaneVelocity = displacement / 100.0f;
+		m_bigPlaneSprite.setRotation(headingD);
+	}*/
+}
+
 /// <summary>
 /// Update the game world
 /// </summary>
@@ -102,6 +144,8 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
+
+	
 }
 
 /// <summary>
@@ -110,12 +154,18 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color::White);
+
+	m_window.draw(m_ScoreBoard);
+
+	m_window.draw(balls[0].ballShape);
+
 	m_window.display();
 }
 
 void Game::setup()
 {
 	setupFontAndText(); // load font 
+	setupScoreBoard();
 	setupSprite(); // load texture
 }
 
@@ -130,10 +180,27 @@ void Game::setupFontAndText()
 	}
 }
 
+void Game::setupScoreBoard()
+{
+	m_ScoreBoard.setFont(m_ArialBlackfont);
+	m_ScoreBoard.setString("Hello World! I need roughly 30 chars here.");
+	m_ScoreBoard.setCharacterSize(24);
+	m_ScoreBoard.setFillColor(sf::Color::Green);
+	m_ScoreBoard.setOutlineColor(sf::Color::Black);
+	m_ScoreBoard.setPosition((WIDTH * 0.5f) - (m_ScoreBoard.getLocalBounds().width * 0.5f), m_ScoreBoard.getLocalBounds().height);
+}
+
 /// <summary>
 /// load the texture and setup the sprite for the logo
 /// </summary>
 void Game::setupSprite()
 {
 
+}
+
+void Game::mouseScreenPosition(sf::Event t_event)
+{
+	m_mouseXCur = t_event.mouseMove.x;
+	m_mouseYCur = t_event.mouseMove.y;
+	m_ScoreBoard.setString("Mouse X: " + std::to_string(m_mouseXCur) + " | Mouse Y: " + std::to_string(m_mouseYCur));
 }

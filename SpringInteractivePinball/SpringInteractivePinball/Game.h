@@ -29,7 +29,7 @@ public:
 	static float v2fGetMagnitude(sf::Vector2f velocity);
 	static float v2fGetMagSquared(sf::Vector2f velocity);
 
-	static sf::Vector2f testPos(sf::Vector2f t_pos);
+	sf::Vector2f testPos(sf::Vector2f t_pos);
 
 private:
 	void setup();
@@ -52,7 +52,7 @@ private:
 
 	static const unsigned int WIDTH = 600U;
 	static const unsigned int HEIGHT = 960U;
-	const float nudgeScalar = 0.05f;
+	const float m_nudgeScalar = 0.5f;
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
@@ -62,10 +62,9 @@ private:
 
 	sf::Vector2f m_mouseDown;//location of mouse down click
 
-	Ball balls[4] = {	Ball(16.0f, sf::Vector2f(300.0f, 500.0f)),
-						Ball(16.0f, sf::Vector2f(300.0f, 500.0f)),
-						Ball(16.0f, sf::Vector2f(300.0f, 500.0f)),
-						Ball(16.0f, sf::Vector2f(300.0f, 500.0f))};
+	Ball balls[4] = {	Ball(16.0f, sf::Vector2f(300.0f, 500.0f),
+						Ball(16.0f, ;
+
 	bool m_exitGame; // control exiting game
 
 };

@@ -1,21 +1,28 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+
 class Ball
 {
 public:
 
 	Ball();
-	Ball(float t_radius, sf::Vector2f t_startPos);
+
+	Ball(Game& t_game);
+	/*Ball(float t_radius, sf::Vector2f t_startPos);*/
 	~Ball();
+
+	//void Initialise(float t_radius, sf::Vector2f t_startPos);
+
+	Game game;
 
 	sf::Sprite ballSprite;
 	sf::CircleShape ballShape;
-	float m_radius = 1.0f;
+	const float M_RADIUS = 16.0f;
 
-	sf::Vector2f m_posStart;
+	const sf::Vector2f M_POS_START = sf::Vector2f(300.0f, 500.0f);
 
 	sf::Vector2f m_velocityCur = sf::Vector2f{ 0.0f,0.0f };
-	sf::Vector2f m_positionCur;
+	sf::Vector2f m_positionCur = M_POS_START;
 	sf::Vector2f m_positionNxt;
 	sf::Vector2f m_direction;
 
@@ -32,9 +39,9 @@ public:
 	/// <returns></returns>
 	void addForce(sf::Vector2f t_dir, float t_speed);
 
-	
+	void bounceCardinal(bool horizontal);
 
-	void move();
+	void move(sf::Time t_deltaTime);
 
 private:
 	

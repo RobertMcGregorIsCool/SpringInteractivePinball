@@ -133,7 +133,7 @@ void Game::processMouseUp(sf::Event t_event)
 		
 	sf::Vector2f displacement; // Remember to ask about the word 'displacement'.
 
-	displacement = (m_mouseDown - static_cast<sf::Vector2f>(m_mouseCur)) * nudgeScalar;
+	displacement = (m_mouseDown - static_cast<sf::Vector2f>(m_mouseCur)) * m_nudgeScalar;
 	
 	/*float headingD;
 	float headingR;	
@@ -161,7 +161,7 @@ void Game::update(sf::Time t_deltaTime)
 		m_window.close();
 	}
 
-	balls[0].move();
+	balls[0].move(t_deltaTime);
 }
 
 /// <summary>
@@ -228,6 +228,11 @@ sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 {
 	float wide = static_cast<float>(WIDTH);
 	float high = static_cast<float>(HEIGHT);
+	if (t_pos.x <= 0.0f)
+	{
+		balls[0].bounceCardinal(true);
+	}
+
 	t_pos.x = t_pos.x <= 0.0f ? 0.0f : t_pos.x;
 	t_pos.x = t_pos.x >= wide ? wide : t_pos.x;
 	t_pos.y = t_pos.y <= 0.0f ? 0.0f : t_pos.y;

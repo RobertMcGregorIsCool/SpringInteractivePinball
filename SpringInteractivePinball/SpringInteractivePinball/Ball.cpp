@@ -6,22 +6,36 @@ Ball::Ball()
 {
 }
 
-Ball::Ball(float t_radius = 1.0f, sf::Vector2f t_startPos = sf::Vector2f(300.0f, 500.0f))
+Ball::Ball(Game& t_game)
 {
-	m_posStart = t_startPos;
-	m_positionCur = m_posStart;
-	m_radius = t_radius;
-	
+	game = t_game;
+
 	ballShape.setFillColor(sf::Color::Red);
-	ballShape.setRadius(m_radius);
-	ballShape.setPosition(t_startPos);
-	ballShape.setOrigin(m_radius, m_radius);
+	ballShape.setRadius(M_RADIUS);
+	ballShape.setPosition(M_POS_START);
+	ballShape.setOrigin(M_RADIUS, M_RADIUS);
 }
+
+//Ball::Ball()
+//{
+//	
+// ballShape.setFillColor(sf::Color::Red);
+// ballShape.setRadius(M_RADIUS);
+// ballShape.setPosition(M_POS_START);
+// ballShape.setOrigin(M_RADIUS, M_RADIUS);
+//}
 
 
 Ball::~Ball()
 {
 }
+
+//void Ball::Initialise(float t_radius, sf::Vector2f t_startPos)
+//{
+//	
+//}
+
+
 
 
 void Ball::addForce(sf::Vector2f t_dir, float t_speed)
@@ -30,9 +44,22 @@ void Ball::addForce(sf::Vector2f t_dir, float t_speed)
 	
 }
 
-void Ball::move()
+void Ball::bounceCardinal(bool horizontal)
+{
+	if (horizontal)
+	{
+		m_velocityCur.x *= -1;
+	}
+	else
+	{
+		m_velocityCur.y *= -1;
+	}
+}
+
+
+void Ball::move(sf::Time t_deltaTime)
 {// Continually called in Update()?
-	m_positionNxt = m_positionCur + m_velocityCur;// Multiply this by deltatime?
+	m_positionNxt = m_positionCur + (m_velocityCur * t_deltaTime.asSeconds());// Multiply this by deltatime?
 
 	m_positionCur = Game::testPos(m_positionNxt);
 

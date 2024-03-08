@@ -58,6 +58,24 @@ void Game::run()
 		render(); // as many as possible
 	}
 }
+sf::Vector2f Game::v2fGetNormal(sf::Vector2f velocity)
+{
+	float length = v2fGetMagnitude(velocity);
+	if (length != 0)
+		return sf::Vector2f(velocity.x / length, velocity.y / length);
+	else
+		return velocity;
+}
+float Game::v2fGetMagnitude(sf::Vector2f velocity)
+{
+	float length = sqrt(v2fGetMagSquared(velocity));
+	return length;
+}
+float Game::v2fGetMagSquared(sf::Vector2f velocity)
+{
+	return (velocity.x * velocity.x) + (velocity.y * velocity.y);
+}
+
 /// <summary>
 /// handle user and system events/ input
 /// get key presses/ mouse moves etc. from OS
@@ -112,26 +130,24 @@ void Game::processMouseDown(sf::Event t_event)
 void Game::processMouseUp(sf::Event t_event)
 {
 	std::cout << "Unclicky!";
+		
+	sf::Vector2f displacement; // Remember to ask about the word 'displacement'.
 
-	sf::Vector2f mouseUp;
-	sf::Vector2f displacement;
-	float headingD;
-	float headingR;
-
-	mouseUp.x = static_cast<float>(t_event.mouseButton.x);
-	mouseUp.y = static_cast<float>(t_event.mouseButton.y);
-
-	displacement = mouseUp - m_mouseDown;
+	displacement = (m_mouseDown - static_cast<sf::Vector2f>(m_mouseCur)) * nudgeScalar;
+	
+	/*float headingD;
+	float headingR;	
 	headingR = std::atan2f(displacement.y, displacement.x);
-	/*headingD = headingR * 180.0f / M_PI;
-	headingD = headingD + 90.0f;
+	headingD = headingR * 180.0f / M_PI;
+	headingD = headingD + 90.0f;*/
 
 	if (sf::Mouse::Left == t_event.mouseButton.button)
 	{
-		m_bigHeading = headingD;
-		m_bigPlaneVelocity = displacement / 100.0f;
-		m_bigPlaneSprite.setRotation(headingD);
-	}*/
+		// m_bigPlaneVelocity = displacement / 100.0f;
+		balls[0].addForce(v2fGetNormal(displacement), v2fGetMagnitude(displacement));
+		// m_bigHeading = headingD;
+		// m_bigPlaneSprite.setRotation(headingD);
+	}
 }
 
 /// <summary>
@@ -145,7 +161,7 @@ void Game::update(sf::Time t_deltaTime)
 		m_window.close();
 	}
 
-	
+	balls[0].move();
 }
 
 /// <summary>
@@ -155,9 +171,9 @@ void Game::render()
 {
 	m_window.clear(sf::Color::White);
 
-	m_window.draw(m_ScoreBoard);
-
 	m_window.draw(balls[0].ballShape);
+
+	m_window.draw(m_ScoreBoard);
 
 	m_window.display();
 }
@@ -200,7 +216,23 @@ void Game::setupSprite()
 
 void Game::mouseScreenPosition(sf::Event t_event)
 {
-	m_mouseXCur = t_event.mouseMove.x;
-	m_mouseYCur = t_event.mouseMove.y;
-	m_ScoreBoard.setString("Mouse X: " + std::to_string(m_mouseXCur) + " | Mouse Y: " + std::to_string(m_mouseYCur));
+	m_mouseCur.x = t_event.mouseMove.x;
+	m_mouseCur.y = t_event.mouseMove.y;
+	if (m_mouseCur.x >= 0 && m_mouseCur.x <= WIDTH && m_mouseCur.x >= 0 && m_mouseCur.y <= HEIGHT)
+	{
+		m_ScoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) + " | Mouse Y: " + std::to_string(m_mouseCur.y));
+	}	
 }
+
+sf::Vector2f Game::testPos(sf::Vector2f t_pos)
+{
+	float wide = static_cast<float>(WIDTH);
+	float high = static_cast<float>(HEIGHT);
+	t_pos.x = t_pos.x <= 0.0f ? 0.0f : t_pos.x;
+	t_pos.x = t_pos.x >= wide ? wide : t_pos.x;
+	t_pos.y = t_pos.y <= 0.0f ? 0.0f : t_pos.y;
+	t_pos.y = t_pos.y >= high ? high : t_pos.y;
+	return t_pos;
+}
+
+

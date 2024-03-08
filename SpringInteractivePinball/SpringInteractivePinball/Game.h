@@ -12,6 +12,9 @@
 #include <SFML/Graphics.hpp>
 #include "Ball.h"
 
+#define _USE_MATH_DEFINES	// Ehh, why not.
+#include <math.h>			// Go the whole hog. Be bigger than god.
+
 class Game
 {
 public:
@@ -21,6 +24,12 @@ public:
 	/// main method for game
 	/// </summary>
 	void run();
+
+	static sf::Vector2f v2fGetNormal(sf::Vector2f velocity);
+	static float v2fGetMagnitude(sf::Vector2f velocity);
+	static float v2fGetMagSquared(sf::Vector2f velocity);
+
+	static sf::Vector2f testPos(sf::Vector2f t_pos);
 
 private:
 	void setup();
@@ -39,15 +48,17 @@ private:
 
 	void mouseScreenPosition(sf::Event t_event);
 
-	const unsigned int WIDTH = 600U;
-	const unsigned int HEIGHT = 1016U;
+	
+
+	static const unsigned int WIDTH = 600U;
+	static const unsigned int HEIGHT = 960U;
+	const float nudgeScalar = 0.05f;
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_ScoreBoard;
 
-	int m_mouseXCur = 0;
-	int m_mouseYCur = 0;
+	sf::Vector2i m_mouseCur;
 
 	sf::Vector2f m_mouseDown;//location of mouse down click
 

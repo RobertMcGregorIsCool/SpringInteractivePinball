@@ -36,6 +36,7 @@ private:
 	void setup();
 	void setupFontAndText();
 	void setupScoreBoard();
+	void setupTable();
 	void setupSprite();
 	
 	void render();
@@ -57,6 +58,8 @@ private:
 	const float m_nudgeScalar = 0.5f;
 
 	sf::RenderWindow m_window; // main SFML window
+	sf::RectangleShape m_backgroundImage; // backgroundImage
+	float m_backgroundImageThickness = -8.0f;
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_ScoreBoard;
 
@@ -64,7 +67,7 @@ private:
 
 	sf::Vector2f m_mouseDown;//location of mouse down click
 
-	Ball balls[4];
+	Ball m_balls[4];
 
 	bool m_exitGame; // control exiting game
 

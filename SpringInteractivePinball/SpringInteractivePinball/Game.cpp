@@ -151,7 +151,7 @@ void Game::processMouseUp(sf::Event t_event)
 	if (sf::Mouse::Left == t_event.mouseButton.button)
 	{
 		// m_bigPlaneVelocity = displacement / 100.0f;
-		balls[0].addForce(v2fGetNormal(displacement), v2fGetMagnitude(displacement));
+		m_balls[0].addForce(v2fGetNormal(displacement), v2fGetMagnitude(displacement));
 		// m_bigHeading = headingD;
 		// m_bigPlaneSprite.setRotation(headingD);
 	}
@@ -168,8 +168,8 @@ void Game::update(sf::Time t_deltaTime)
 		m_window.close();
 	}
 
-	balls[0].move(t_deltaTime);
-	balls[0].setPosition(testPos(balls[0].m_positionNxt));
+	m_balls[0].move(t_deltaTime);
+	m_balls[0].setPosition(testPos(m_balls[0].m_positionNxt));
 
 	updateScoreBoard();
 }
@@ -181,7 +181,9 @@ void Game::render()
 {
 	m_window.clear(sf::Color::White);
 
-	m_window.draw(balls[0].m_ballShape);
+	m_window.draw(m_backgroundImage);
+
+	m_window.draw(m_balls[0].m_ballShape);
 
 	m_window.draw(m_ScoreBoard);
 
@@ -192,6 +194,7 @@ void Game::setup()
 {
 	setupFontAndText(); // load font 
 	setupScoreBoard();
+	setupTable();
 	setupSprite(); // load texture
 }
 
@@ -216,6 +219,15 @@ void Game::setupScoreBoard()
 	m_ScoreBoard.setPosition((WIDTH * 0.5f) - (m_ScoreBoard.getLocalBounds().width * 0.5f), m_ScoreBoard.getLocalBounds().height);
 }
 
+void Game::setupTable()
+{
+	m_backgroundImage.setOutlineColor(sf::Color::Magenta);
+	m_backgroundImage.setOutlineThickness(m_backgroundImageThickness);
+	m_backgroundImage.setSize(sf::Vector2f(WIDTH, HEIGHT));
+	m_backgroundImage.setOrigin(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
+	m_backgroundImage.setPosition(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
+}
+
 /// <summary>
 /// load the texture and setup the sprite for the logo
 /// </summary>
@@ -237,8 +249,8 @@ void Game::updateScoreBoard()
 	{
 		m_ScoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
 			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
-			"\nBall X: " + std::to_string(balls[0].m_positionNxt.x) +
-			" | Ball Y: " + std::to_string(balls[0].m_positionNxt.y));
+			"\nBall X: " + std::to_string(m_balls[0].m_positionNxt.x) +
+			" | Ball Y: " + std::to_string(m_balls[0].m_positionNxt.y));
 	}
 }
 
@@ -247,24 +259,24 @@ sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 	float wide = static_cast<float>(WIDTH);
 	float high = static_cast<float>(HEIGHT);
 	
-	if (t_pos.x - balls[0].M_RADIUS <= 0.0f)
+	if (t_pos.x - m_balls[0].M_RADIUS <= 0.0f)
 	{
-		balls[0].bounceCardinal(true);
+		m_balls[0].bounceCardinal(true);
 	}
 
-	if (t_pos.x + balls[0].M_RADIUS >= wide)
+	if (t_pos.x + m_balls[0].M_RADIUS >= wide)
 	{
-		balls[0].bounceCardinal(true);
+		m_balls[0].bounceCardinal(true);
 	}
 		
-	if (t_pos.y - balls[0].M_RADIUS <= 0.0f)
+	if (t_pos.y - m_balls[0].M_RADIUS <= 0.0f)
 	{
-		balls[0].bounceCardinal(false);
+		m_balls[0].bounceCardinal(false);
 	}
 		
-	if (t_pos.y + balls[0].M_RADIUS >= high)
+	if (t_pos.y + m_balls[0].M_RADIUS >= high)
 	{
-		balls[0].bounceCardinal(false);
+		m_balls[0].bounceCardinal(false);
 	}
 	return t_pos;
 }

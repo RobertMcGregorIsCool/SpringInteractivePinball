@@ -1,8 +1,6 @@
 /// <summary>
-/// @author Peter Lowe
-/// @date May 2019
-///
-/// you need to change the above lines or lose marks
+/// author Robert McGregor login: c00302210
+/// 
 /// </summary>
 
 #include "Game.h"
@@ -74,6 +72,15 @@ float Game::v2fGetMagnitude(sf::Vector2f velocity)
 float Game::v2fGetMagSquared(sf::Vector2f velocity)
 {
 	return (velocity.x * velocity.x) + (velocity.y * velocity.y);
+}
+
+sf::Vector2f Game::v2fClamp(float max, float min, sf::Vector2f v2f)
+{
+	v2f.x = v2f.x > max ? max : v2f.x;
+	v2f.x = v2f.x < min ? min : v2f.x;
+	v2f.y = v2f.y > max ? max : v2f.y;
+	v2f.y = v2f.y < min ? min : v2f.y;
+	return v2f;
 }
 
 /// <summary>
@@ -162,6 +169,9 @@ void Game::update(sf::Time t_deltaTime)
 	}
 
 	balls[0].move(t_deltaTime);
+	balls[0].setPosition(testPos(balls[0].m_positionNxt));
+
+	updateScoreBoard();
 }
 
 /// <summary>
@@ -171,7 +181,7 @@ void Game::render()
 {
 	m_window.clear(sf::Color::White);
 
-	m_window.draw(balls[0].ballShape);
+	m_window.draw(balls[0].m_ballShape);
 
 	m_window.draw(m_ScoreBoard);
 
@@ -218,25 +228,44 @@ void Game::mouseScreenPosition(sf::Event t_event)
 {
 	m_mouseCur.x = t_event.mouseMove.x;
 	m_mouseCur.y = t_event.mouseMove.y;
+		
+}
+
+void Game::updateScoreBoard()
+{
 	if (m_mouseCur.x >= 0 && m_mouseCur.x <= WIDTH && m_mouseCur.x >= 0 && m_mouseCur.y <= HEIGHT)
 	{
-		m_ScoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) + " | Mouse Y: " + std::to_string(m_mouseCur.y));
-	}	
+		m_ScoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
+			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
+			"\nBall X: " + std::to_string(balls[0].m_positionNxt.x) +
+			" | Ball Y: " + std::to_string(balls[0].m_positionNxt.y));
+	}
 }
 
 sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 {
 	float wide = static_cast<float>(WIDTH);
 	float high = static_cast<float>(HEIGHT);
-	if (t_pos.x <= 0.0f)
+	
+	if (t_pos.x - balls[0].M_RADIUS <= 0.0f)
 	{
 		balls[0].bounceCardinal(true);
 	}
 
-	t_pos.x = t_pos.x <= 0.0f ? 0.0f : t_pos.x;
-	t_pos.x = t_pos.x >= wide ? wide : t_pos.x;
-	t_pos.y = t_pos.y <= 0.0f ? 0.0f : t_pos.y;
-	t_pos.y = t_pos.y >= high ? high : t_pos.y;
+	if (t_pos.x + balls[0].M_RADIUS >= wide)
+	{
+		balls[0].bounceCardinal(true);
+	}
+		
+	if (t_pos.y - balls[0].M_RADIUS <= 0.0f)
+	{
+		balls[0].bounceCardinal(false);
+	}
+		
+	if (t_pos.y + balls[0].M_RADIUS >= high)
+	{
+		balls[0].bounceCardinal(false);
+	}
 	return t_pos;
 }
 

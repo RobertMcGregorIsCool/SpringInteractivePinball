@@ -1,47 +1,30 @@
+/// <summary>
+/// author Robert McGregor login: c00302210
+/// 
+/// </summary>
+
 #include "Ball.h"
 #include "Game.h"
 #include <SFML/Graphics.hpp>
 
+
 Ball::Ball()
 {
+	m_ballShape.setFillColor(sf::Color::Red);
+	m_ballShape.setRadius(M_RADIUS);
+	m_ballShape.setPosition(M_POS_START);
+	m_ballShape.setOrigin(M_RADIUS, M_RADIUS);
 }
-
-Ball::Ball(Game& t_game)
-{
-	game = t_game;
-
-	ballShape.setFillColor(sf::Color::Red);
-	ballShape.setRadius(M_RADIUS);
-	ballShape.setPosition(M_POS_START);
-	ballShape.setOrigin(M_RADIUS, M_RADIUS);
-}
-
-//Ball::Ball()
-//{
-//	
-// ballShape.setFillColor(sf::Color::Red);
-// ballShape.setRadius(M_RADIUS);
-// ballShape.setPosition(M_POS_START);
-// ballShape.setOrigin(M_RADIUS, M_RADIUS);
-//}
 
 
 Ball::~Ball()
 {
 }
 
-//void Ball::Initialise(float t_radius, sf::Vector2f t_startPos)
-//{
-//	
-//}
-
-
-
-
 void Ball::addForce(sf::Vector2f t_dir, float t_speed)
 {
 	m_velocityCur += (t_dir * t_speed);
-	
+	m_velocityCur = Game::v2fClamp(m_velocityMax, -m_velocityMax, m_velocityCur);
 }
 
 void Ball::bounceCardinal(bool horizontal)
@@ -58,10 +41,19 @@ void Ball::bounceCardinal(bool horizontal)
 
 
 void Ball::move(sf::Time t_deltaTime)
-{// Continually called in Update()?
+{// Continually called in Game::Update()?
 	m_positionNxt = m_positionCur + (m_velocityCur * t_deltaTime.asSeconds());// Multiply this by deltatime?
-
-	m_positionCur = Game::testPos(m_positionNxt);
-
-	ballShape.setPosition(m_positionCur);
 }
+
+void Ball::setPosition(sf::Vector2f newPosition) 
+{
+	m_positionCur = newPosition;
+
+	m_ballShape.setPosition(newPosition);
+	// Sprite.setPosition(newPosition) will go here soon.
+}
+
+
+
+
+

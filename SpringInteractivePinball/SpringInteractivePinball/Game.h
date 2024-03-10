@@ -29,6 +29,9 @@ public:
 	static float		v2fGetMagnitude(sf::Vector2f velocity);
 	static float		v2fGetMagSquared(sf::Vector2f velocity);
 	static sf::Vector2f v2fClamp(float max, float min, sf::Vector2f v2f);
+	static float		floatLerp(float a, float b, float t);
+	static sf::Vector2f	v2fLerp (sf::Vector2f a, sf::Vector2f b, float t);
+	static sf::Vector2f v2fAbsolute(sf::Vector2f vector);
 
 	sf::Vector2f testPos(sf::Vector2f t_pos);
 
@@ -50,6 +53,8 @@ private:
 
 	void mouseScreenPosition(sf::Event t_event);
 
+	bool screenSettle(sf::Time t_deltaTime);
+
 	void updateScoreBoard();
 
 	static const unsigned int WIDTH = 600U;
@@ -58,14 +63,22 @@ private:
 	const float m_nudgeScalar = 0.5f;
 
 	sf::RenderWindow m_window; // main SFML window
+	sf::View m_view; // View onto table
+
 	sf::RectangleShape m_backgroundImage; // backgroundImage
 	float m_backgroundImageThickness = -8.0f;
+
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_ScoreBoard;
 
 	sf::Vector2i m_mouseCur;
 
 	sf::Vector2f m_mouseDown;//location of mouse down click
+	sf::Vector2f m_mouseUp; // Reluctantly have to use this, boo.
+
+	bool m_screenKicked = false;
+	sf::Vector2f m_viewCenterAtStart;
+	float m_viewReturnSpeed = 32.0f;
 
 	Ball m_balls[4];
 

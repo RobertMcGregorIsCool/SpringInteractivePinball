@@ -83,6 +83,23 @@ sf::Vector2f Game::v2fClamp(float max, float min, sf::Vector2f v2f)
 	return v2f;
 }
 
+float Game::floatLerp(float a, float b, float t)
+{
+	return a + t * (b - a);
+}
+
+sf::Vector2f Game::v2fLerp(sf::Vector2f a, sf::Vector2f b, float t)
+{
+	return sf::Vector2f(floatLerp(a.x, b.x, t), floatLerp(a.y, b.y, t));
+}
+
+sf::Vector2f Game::v2fAbsolute(sf::Vector2f vector)
+{
+	float x = std::abs(vector.x);
+	float y = std::abs(vector.y);
+	return sf::Vector2f(x, y);
+}
+
 /// <summary>
 /// handle user and system events/ input
 /// get key presses/ mouse moves etc. from OS
@@ -124,24 +141,32 @@ void Game::processKeys(sf::Event t_event)
 	{
 		m_exitGame = true;
 	}
+	if (sf::Keyboard::K == t_event.key.code)
+	{
+		m_view.move(sf::Vector2f(8.0f, 8.0f));
+		m_view.rotate(10.0f);
+		m_view.zoom(0.85f);
+		m_window.setView(m_view);
+	}
 }
 
 void Game::processMouseDown(sf::Event t_event)
 {
-	std::cout << "Clicky!";
-
 	m_mouseDown.x = static_cast<float>(t_event.mouseButton.x);
 	m_mouseDown.y = static_cast<float>(t_event.mouseButton.y);
 }
 
 void Game::processMouseUp(sf::Event t_event)
 {
-	std::cout << "Unclicky!";
+	m_mouseUp.x = static_cast<float>(t_event.mouseButton.x);
+	m_mouseUp.y = static_cast<float>(t_event.mouseButton.y);
 		
 	sf::Vector2f displacement; // Remember to ask about the word 'displacement'.
 
-	displacement = (m_mouseDown - static_cast<sf::Vector2f>(m_mouseCur)) * m_nudgeScalar;
+	displacement = (m_mouseDown - m_mouseUp) * m_nudgeScalar;
 	
+	std::cout << displacement.x << "-" << displacement.y << "\n";
+
 	/*float headingD;
 	float headingR;	
 	headingR = std::atan2f(displacement.y, displacement.x);
@@ -172,6 +197,7 @@ void Game::update(sf::Time t_deltaTime)
 	m_balls[0].setPosition(testPos(m_balls[0].m_positionNxt));
 
 	updateScoreBoard();
+	screenSettle(t_deltaTime);
 }
 
 /// <summary>
@@ -226,6 +252,12 @@ void Game::setupTable()
 	m_backgroundImage.setSize(sf::Vector2f(WIDTH, HEIGHT));
 	m_backgroundImage.setOrigin(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
 	m_backgroundImage.setPosition(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
+
+	m_view.setCenter(WIDTH * 0.5f, HEIGHT * 0.5f);
+	m_viewCenterAtStart = m_view.getCenter();
+	m_view.reset(sf::FloatRect(0.0f, 0.0f, WIDTH, HEIGHT));
+
+	m_window.setView(m_view);
 }
 
 /// <summary>
@@ -242,6 +274,25 @@ void Game::mouseScreenPosition(sf::Event t_event)
 	m_mouseCur.y = t_event.mouseMove.y;
 		
 }
+
+bool Game::screenSettle(sf::Time t_deltaTime)
+{
+	if (m_view.getCenter() == m_viewCenterAtStart)
+	{
+		return true;
+	}
+	else
+	{
+		m_view.setCenter(v2fLerp(m_view.getCenter(), sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f), t_deltaTime.asSeconds() * m_viewReturnSpeed));
+		m_view.setRotation(floatLerp(m_view.getRotation(), 0.0f, t_deltaTime.asSeconds() * m_viewReturnSpeed));
+		m_view.setSize(v2fLerp(m_view.getSize(), sf::Vector2f(WIDTH, HEIGHT), t_deltaTime.asSeconds() * m_viewReturnSpeed));
+
+		m_window.setView(m_view);
+		return false;
+	}	
+}
+
+
 
 void Game::updateScoreBoard()
 {

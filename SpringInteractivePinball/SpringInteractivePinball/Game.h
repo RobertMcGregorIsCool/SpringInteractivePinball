@@ -34,7 +34,7 @@ public:
 	static float		floatLerp(float a, float b, float t);
 	static sf::Vector2f	v2fLerp (sf::Vector2f a, sf::Vector2f b, float t);
 	static sf::Vector2f v2fAbsolute(sf::Vector2f vector);
-	static int			randomRange(int from, int to);
+	static int			randomRange(int from, int to); // Helper function returns int between two ints. Reacts BADLY to floats.
 
 	sf::Vector2f testPos(sf::Vector2f t_pos);
 

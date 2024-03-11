@@ -104,10 +104,22 @@ sf::Vector2f Game::v2fAbsolute(sf::Vector2f vector)
 
 int Game::randomRange(int from, int to)
 {
-	int moddedFrom		= from + from;
-	int moddedTo		= to + from;
-	int randomNumber	= rand() % moddedTo + moddedFrom;
-	return randomNumber - from;
+	int orderedFrom		= 0;
+	int orderedTo		= 0;
+
+	if (from > to)
+	{
+		orderedTo = from;
+		orderedFrom = to;
+	}
+	else
+	{
+		orderedFrom = from;
+		orderedTo = to;
+	}
+
+	int randomNumber	= rand() % abs(orderedTo - orderedFrom) + orderedFrom;
+	return randomNumber;
 }
 
 /// <summary>
@@ -153,14 +165,17 @@ void Game::processKeys(sf::Event t_event)
 	}
 	if (sf::Keyboard::K == t_event.key.code)
 	{
-		m_view.move(sf::Vector2f(8.0f, 8.0f));
-		m_view.rotate(10.0f);
-		m_view.zoom(0.85f);
+		float moveRandom = static_cast<float>(randomRange(8, -8));
+		m_view.move(sf::Vector2f(moveRandom, moveRandom));
+		float rotRandom = static_cast<float>(randomRange(-10, 10));
+		m_view.rotate(rotRandom);
+		float zoomRandom = static_cast<float>(randomRange(-1, 1));
+		m_view.zoom(zoomRandom);
 		m_window.setView(m_view);
 
 		pinballAudio.m_sndRattle.play();
 
-		// std::cout << "Random number is " << randomRange(-50, 50) << "\n";
+		std::cout << "Random number is " << randomRange(-50, 50) << "\n";
 	}
 }
 
@@ -291,7 +306,7 @@ void Game::mouseScreenPosition(sf::Event t_event)
 
 bool Game::screenSettle(sf::Time t_deltaTime)
 {
-	if (m_view.getCenter() == m_viewCenterAtStart)
+	if (m_view.getCenter() == sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f) && m_view.getRotation() == 0.0f && m_view.getSize() == sf::Vector2f(WIDTH, HEIGHT))
 	{
 		return true;
 	}

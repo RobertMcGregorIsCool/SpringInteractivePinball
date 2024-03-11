@@ -11,6 +11,8 @@
 /// </summary>
 #include <SFML/Graphics.hpp>
 #include "Ball.h"
+#include "PinballAud.h"
+#include <cstdlib>
 
 #define _USE_MATH_DEFINES	// Ehh, why not.
 #include <math.h>			// Go the whole hog. Be bigger than god.
@@ -32,6 +34,7 @@ public:
 	static float		floatLerp(float a, float b, float t);
 	static sf::Vector2f	v2fLerp (sf::Vector2f a, sf::Vector2f b, float t);
 	static sf::Vector2f v2fAbsolute(sf::Vector2f vector);
+	static int			randomRange(int from, int to);
 
 	sf::Vector2f testPos(sf::Vector2f t_pos);
 
@@ -81,6 +84,8 @@ private:
 	float m_viewReturnSpeed = 32.0f;
 
 	Ball m_balls[4];
+
+	PinballAud pinballAudio;
 
 	bool m_exitGame; // control exiting game
 

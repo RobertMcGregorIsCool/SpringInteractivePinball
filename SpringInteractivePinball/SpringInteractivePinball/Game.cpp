@@ -39,6 +39,8 @@ Game::~Game()
 /// </summary>
 void Game::run()
 {	
+	srand(time(nullptr));
+
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	const float fps{ 60.0f };
@@ -100,6 +102,14 @@ sf::Vector2f Game::v2fAbsolute(sf::Vector2f vector)
 	return sf::Vector2f(x, y);
 }
 
+int Game::randomRange(int from, int to)
+{
+	int moddedFrom		= from + from;
+	int moddedTo		= to + from;
+	int randomNumber	= rand() % moddedTo + moddedFrom;
+	return randomNumber - from;
+}
+
 /// <summary>
 /// handle user and system events/ input
 /// get key presses/ mouse moves etc. from OS
@@ -147,6 +157,10 @@ void Game::processKeys(sf::Event t_event)
 		m_view.rotate(10.0f);
 		m_view.zoom(0.85f);
 		m_window.setView(m_view);
+
+		pinballAudio.m_sndRattle.play();
+
+		// std::cout << "Random number is " << randomRange(-50, 50) << "\n";
 	}
 }
 

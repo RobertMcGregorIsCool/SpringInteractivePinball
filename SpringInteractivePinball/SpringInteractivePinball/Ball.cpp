@@ -27,6 +27,12 @@ void Ball::addForce(sf::Vector2f t_dir, float t_speed)
 	m_velocityCur = Game::v2fClamp(m_velocityMax, -m_velocityMax, m_velocityCur);
 }
 
+void Ball::redirect(sf::Vector2f t_dir)
+{
+	sf::Vector2f normalDir = Game::v2fGetNormal(t_dir);
+	m_velocityCur = normalDir * Game::v2fGetMagnitude(m_velocityCur);
+}
+
 void Ball::bounceCardinal(bool horizontal)
 {
 	if (horizontal)
@@ -52,6 +58,18 @@ void Ball::setPosition(sf::Vector2f newPosition)
 	m_ballShape.setPosition(newPosition);
 	// Sprite.setPosition(newPosition) will go here soon.
 }
+
+sf::Vector2f Ball::getVelocity()
+{
+	return m_velocityCur;
+}
+
+sf::Vector2f Ball::getPositionCur()
+{
+	return m_positionCur;
+}
+
+
 
 
 

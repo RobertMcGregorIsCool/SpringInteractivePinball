@@ -1,6 +1,6 @@
 /// <summary>
 /// author Robert McGregor login: c00302210
-/// 
+/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
 /// </summary>
 #ifndef GAME_HPP
 #define GAME_HPP
@@ -10,6 +10,7 @@
 /// Don't forget the endif at the bottom
 /// </summary>
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include "Ball.h"
 #include "PinballAud.h"
 #include <cstdlib>
@@ -34,6 +35,9 @@ public:
 	static float		floatLerp(float a, float b, float t);
 	static sf::Vector2f	v2fLerp (sf::Vector2f a, sf::Vector2f b, float t);
 	static sf::Vector2f v2fAbsolute(sf::Vector2f vector);
+	// static float		v2fCrossProduct(sf::Vector2f a, sf::Vector2f b);
+	static float		v2fDotProduct(sf::Vector2f lhs, sf::Vector2f rhs);
+	static sf::Vector2f v2fReflect(sf::Vector2f approach, sf::Vector2f normal);
 	static int			randomRange(int from, int to); // Helper function returns int between two ints. Reacts BADLY to floats.
 
 	sf::Vector2f testPos(sf::Vector2f t_pos);
@@ -43,11 +47,14 @@ private:
 	void setupFontAndText();
 	void setupScoreBoard();
 	void setupTable();
+	void setupCollision();
 	void setupSprite();
 	
 	void render();
 
 	void update(sf::Time t_deltaTime);
+
+	void collision();
 
 	void processEvents();
 	void processKeys(sf::Event t_event);
@@ -56,6 +63,7 @@ private:
 
 	void mouseScreenPosition(sf::Event t_event);
 
+	void kick();
 	bool screenSettle(sf::Time t_deltaTime);
 
 	void updateScoreBoard();
@@ -85,7 +93,13 @@ private:
 
 	Ball m_balls[4];
 
-	PinballAud pinballAudio;
+	sf::RectangleShape m_testBox;
+	sf::Rect<float> m_testBoxRect;
+
+	sf::CircleShape m_bumper01;
+	sf::CircleShape m_roundedTopBot;
+
+	PinballAud m_pinballAudio;
 
 	bool m_exitGame; // control exiting game
 

@@ -5,7 +5,7 @@
 
 #include "Game.h"
 #include <iostream>
-
+#include <cmath>
 
 
 /// <summary>
@@ -41,12 +41,11 @@ void Game::run()
 {	
 	srand(time(nullptr));
 
-	pinballAudio.m_musArcadeAmbience01.setLoop(true);
-	pinballAudio.m_musArcadeAmbience01.setVolume(60);
-	pinballAudio.m_musArcadeAmbience01.play();
-	pinballAudio.m_musHardRock.setLoop(true);
-	pinballAudio.m_musHardRock.setVolume(20);
-	pinballAudio.m_musHardRock.play();
+	m_pinballAudio.m_musArcadeAmbience01.setLoop(true);
+	m_pinballAudio.m_musArcadeAmbience01.play();
+	m_pinballAudio.m_musHardRock.setLoop(true);
+	m_pinballAudio.m_musHardRock.setVolume(20);
+	m_pinballAudio.m_musHardRock.play();
 
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
@@ -107,6 +106,22 @@ sf::Vector2f Game::v2fAbsolute(sf::Vector2f vector)
 	float x = std::abs(vector.x);
 	float y = std::abs(vector.y);
 	return sf::Vector2f(x, y);
+}
+
+//float Game::v2fCrossProduct(sf::Vector2f a, sf::Vector2f b)
+//{	// ? = sin-1 [ |a x b| / (|a| |b|) ].
+//	return asin ((v2fGetMagnitude(a * b)) / ())
+//}
+
+float Game::v2fDotProduct(sf::Vector2f lhs, sf::Vector2f rhs)
+{
+	// return v2fGetMagnitude(lhs) * v2fGetMagnitude(rhs) * cos(v2fCrossProduct(lhs,rhs));
+	return lhs.x * rhs.x + lhs.y * rhs.y;
+}
+
+sf::Vector2f Game::v2fReflect(sf::Vector2f approach, sf::Vector2f normal)
+{
+	return approach - 2 * v2fDotProduct(approach, normal) * normal;
 }
 
 int Game::randomRange(int from, int to)
@@ -172,17 +187,7 @@ void Game::processKeys(sf::Event t_event)
 	}
 	if (sf::Keyboard::K == t_event.key.code)
 	{
-		float moveRandom = static_cast<float>(randomRange(8, -8));
-		m_view.move(sf::Vector2f(moveRandom, moveRandom));
-		float rotRandom = static_cast<float>(randomRange(-10, 10));
-		m_view.rotate(rotRandom);
-		float zoomRandom = static_cast<float>(randomRange(-1, 1));
-		m_view.zoom(zoomRandom);
-		m_window.setView(m_view);
-
-		pinballAudio.m_sndRattle.play();
-
-		std::cout << "Random number is " << randomRange(-50, 50) << "\n";
+		kick();
 	}
 }
 
@@ -233,7 +238,64 @@ void Game::update(sf::Time t_deltaTime)
 	m_balls[0].setPosition(testPos(m_balls[0].m_positionNxt));
 
 	updateScoreBoard();
+	collision();
 	screenSettle(t_deltaTime);
+}
+
+void Game::collision()
+{
+	sf::Vector2f normalisedDir = v2fGetNormal(m_balls[0].getVelocity());
+	sf::Vector2f leadingPointOfBall = (normalisedDir * m_balls[0].M_RADIUS);
+	leadingPointOfBall = leadingPointOfBall + m_balls[0].getPositionCur();
+
+	if (m_testBoxRect.contains(leadingPointOfBall))
+	{
+		m_testBox.setFillColor(sf::Color::Green);
+
+		if (m_balls[0].getPositionCur().x < m_testBox.getGlobalBounds().left)
+		{
+			m_balls[0].bounceCardinal(true);
+		}
+		else if (m_balls[0].getPositionCur().x > m_testBox.getGlobalBounds().left + m_testBox.getGlobalBounds().width)
+		{
+			m_balls[0].bounceCardinal(true);
+		}
+		else if (m_balls[0].getPositionCur().y < m_testBox.getGlobalBounds().top)
+		{
+			m_balls[0].bounceCardinal(false);
+		}
+		else
+		{
+			m_balls[0].bounceCardinal(false);
+		}
+		kick();
+		 //sf::Vector2i newWindowPos = m_window.getPosition() + sf::Vector2i(0, 30);
+		 //m_window.setPosition(newWindowPos);
+	}
+	else
+	{
+		m_testBox.setFillColor(sf::Color::Yellow);
+	}
+
+	float bumperColDist = v2fGetMagnitude(m_balls[0].getPositionCur() - m_bumper01.getPosition());
+	
+	if (bumperColDist < m_bumper01.getRadius() + m_balls[0].M_RADIUS)
+	{
+		m_bumper01.setFillColor(sf::Color::Blue);
+
+		sf::Vector2f bumperNormal = v2fGetNormal(m_bumper01.getPosition() - m_balls[0].getPositionCur());
+		
+		sf::Vector2f reflectionVec = v2fReflect(normalisedDir, bumperNormal);
+
+		m_balls[0].redirect(reflectionVec);
+
+		kick();
+	}
+	else
+	{
+		m_bumper01.setFillColor(sf::Color::Cyan);
+	}
+
 }
 
 /// <summary>
@@ -243,8 +305,13 @@ void Game::render()
 {
 	m_window.clear(sf::Color::White);
 
+	m_window.draw(m_roundedTopBot);
 	m_window.draw(m_backgroundImage);
 
+	m_window.draw(m_testBox);
+	m_window.draw(m_bumper01);
+	
+	
 	m_window.draw(m_balls[0].m_ballShape);
 
 	m_window.draw(m_ScoreBoard);
@@ -258,6 +325,7 @@ void Game::setup()
 	setupScoreBoard();
 	setupTable();
 	setupSprite(); // load texture
+	setupCollision();
 }
 
 /// <summary>
@@ -284,6 +352,7 @@ void Game::setupScoreBoard()
 void Game::setupTable()
 {
 	m_backgroundImage.setOutlineColor(sf::Color::Magenta);
+	m_backgroundImage.setFillColor(sf::Color::Transparent);
 	m_backgroundImage.setOutlineThickness(m_backgroundImageThickness);
 	m_backgroundImage.setSize(sf::Vector2f(WIDTH, HEIGHT));
 	m_backgroundImage.setOrigin(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
@@ -294,6 +363,29 @@ void Game::setupTable()
 	m_view.reset(sf::FloatRect(0.0f, 0.0f, WIDTH, HEIGHT));
 
 	m_window.setView(m_view);
+}
+
+void Game::setupCollision()
+{
+	m_testBox.setOrigin(100.0f, 100.0f);
+	m_testBox.setFillColor(sf::Color::Yellow);
+	m_testBox.setSize(sf::Vector2f(200.0f, 200.0f));
+	m_testBox.setPosition(WIDTH * 0.5f, HEIGHT * 0.75f);
+
+	m_testBoxRect = sf::Rect<float>{ sf::Vector2f((WIDTH * 0.5f)-100.0f, (HEIGHT * 0.75f)-100.0f), m_testBox.getSize()};
+
+	m_bumper01.setRadius(48.0f);
+	m_bumper01.setOrigin(m_bumper01.getRadius(), m_bumper01.getRadius());
+	m_bumper01.setFillColor(sf::Color::Cyan);
+	m_bumper01.setOutlineColor(sf::Color::Red);
+	m_bumper01.setOutlineThickness(-4.0f);
+	m_bumper01.setPosition(WIDTH * 0.5f - m_bumper01.getRadius() * 0.5f, HEIGHT * 0.25f);
+
+	m_roundedTopBot.setRadius(512.0f-32.0f);
+	m_roundedTopBot.setOrigin(m_roundedTopBot.getRadius(), m_roundedTopBot.getRadius());
+	m_roundedTopBot.setOutlineColor(sf::Color::Magenta);
+	m_roundedTopBot.setOutlineThickness(100.0f);
+	m_roundedTopBot.setPosition(WIDTH * 0.5f, HEIGHT * 0.5f);
 }
 
 /// <summary>
@@ -309,6 +401,21 @@ void Game::mouseScreenPosition(sf::Event t_event)
 	m_mouseCur.x = t_event.mouseMove.x;
 	m_mouseCur.y = t_event.mouseMove.y;
 		
+}
+
+void Game::kick()
+{
+	float moveRandom = static_cast<float>(randomRange(8, -8));
+	m_view.move(sf::Vector2f(moveRandom, moveRandom));
+	float rotRandom = static_cast<float>(randomRange(-10, 10));
+	m_view.rotate(rotRandom);
+	float zoomRandom = static_cast<float>(randomRange(-1, 1));
+	m_view.zoom(zoomRandom);
+	m_window.setView(m_view);
+
+	m_pinballAudio.m_sndRattle.play();
+
+	std::cout << "Random number is " << randomRange(-50, 50) << "\n";
 }
 
 bool Game::screenSettle(sf::Time t_deltaTime)
@@ -349,21 +456,25 @@ sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 	if (t_pos.x - m_balls[0].M_RADIUS <= 0.0f)
 	{
 		m_balls[0].bounceCardinal(true);
+		kick();
 	}
 
 	if (t_pos.x + m_balls[0].M_RADIUS >= wide)
 	{
 		m_balls[0].bounceCardinal(true);
+		kick();
 	}
 		
 	if (t_pos.y - m_balls[0].M_RADIUS <= 0.0f)
 	{
 		m_balls[0].bounceCardinal(false);
+		kick();
 	}
 		
 	if (t_pos.y + m_balls[0].M_RADIUS >= high)
 	{
 		m_balls[0].bounceCardinal(false);
+		kick();
 	}
 	return t_pos;
 }

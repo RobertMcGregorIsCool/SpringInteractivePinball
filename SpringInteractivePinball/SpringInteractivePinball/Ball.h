@@ -28,11 +28,15 @@ public:
 	/// <returns></returns>
 	void addForce(sf::Vector2f t_dir, float t_speed);
 
-	void bounceCardinal(bool horizontal);
+	void redirect (sf::Vector2f t_dir);
+	void bounceCardinal(bool t_horizontal);
 
 	void move(sf::Time t_deltaTime);
 
-	void setPosition(sf::Vector2f newPosition);
+	void setPosition(sf::Vector2f t_newPosition);
+
+	sf::Vector2f getVelocity();
+	sf::Vector2f getPositionCur();
 
 private:
 

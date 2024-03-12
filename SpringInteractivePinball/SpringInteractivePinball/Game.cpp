@@ -42,6 +42,7 @@ void Game::run()
 	srand(time(nullptr));
 
 	pinballAudio.m_musArcadeAmbience01.setLoop(true);
+	pinballAudio.m_musArcadeAmbience01.setVolume(60);
 	pinballAudio.m_musArcadeAmbience01.play();
 	pinballAudio.m_musHardRock.setLoop(true);
 	pinballAudio.m_musHardRock.setVolume(20);

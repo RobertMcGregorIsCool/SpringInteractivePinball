@@ -10,7 +10,7 @@
 
 Ball::Ball()
 {
-	m_ballShape.setFillColor(sf::Color::Red);
+	m_ballShape.setFillColor(sf::Color(127,127,127,255));
 	m_ballShape.setRadius(M_RADIUS);
 	m_ballShape.setPosition(M_POS_START);
 	m_ballShape.setOrigin(M_RADIUS, M_RADIUS);

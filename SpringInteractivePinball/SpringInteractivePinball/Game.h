@@ -39,6 +39,7 @@ public:
 	static float		v2fDotProduct(sf::Vector2f lhs, sf::Vector2f rhs);
 	static sf::Vector2f v2fReflect(sf::Vector2f approach, sf::Vector2f normal);
 	static int			randomRange(int from, int to); // Helper function returns int between two ints. Reacts BADLY to floats.
+	static float		randomRange(float from, float to);
 
 	sf::Vector2f testPos(sf::Vector2f t_pos);
 
@@ -63,7 +64,7 @@ private:
 
 	void mouseScreenPosition(sf::Event t_event);
 
-	void kick();
+	void tableKick();
 	bool screenSettle(sf::Time t_deltaTime);
 
 	void updateScoreBoard();
@@ -79,8 +80,9 @@ private:
 	sf::RectangleShape m_backgroundImage; // backgroundImage
 	float m_backgroundImageThickness = -8.0f;
 
-	sf::Font m_ArialBlackfont; // font used by message
-	sf::Text m_ScoreBoard;
+	// sf::Font m_ArialBlackfont; // font used by message
+	sf::Font m_karnivorDigitFont; // font used by message
+	sf::Text m_scoreBoard;
 
 	sf::Vector2i m_mouseCur;
 

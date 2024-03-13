@@ -6,6 +6,7 @@
 #include "Game.h"
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 
 /// <summary>
@@ -42,6 +43,7 @@ void Game::run()
 	srand(time(nullptr));
 
 	m_pinballAudio.m_musArcadeAmbience01.setLoop(true);
+	m_pinballAudio.m_musArcadeAmbience01.setVolume(60);
 	m_pinballAudio.m_musArcadeAmbience01.play();
 	m_pinballAudio.m_musHardRock.setLoop(true);
 	m_pinballAudio.m_musHardRock.setVolume(20);
@@ -126,23 +128,24 @@ sf::Vector2f Game::v2fReflect(sf::Vector2f approach, sf::Vector2f normal)
 
 int Game::randomRange(int from, int to)
 {
-	int orderedFrom		= 0;
-	int orderedTo		= 0;
-
-	if (from > to)
-	{
-		orderedTo = from;
-		orderedFrom = to;
-	}
-	else
-	{
-		orderedFrom = from;
-		orderedTo = to;
-	}
+	int orderedFrom	= std::min(from,to);
+	int orderedTo	= std::max(to,from);
 
 	int randomNumber	= rand() % abs(orderedTo - orderedFrom) + orderedFrom;
 	return randomNumber;
 }
+
+float Game::randomRange(float from, float to)
+{
+	from *= 100.0f;
+	to *= 100.0f;
+	
+	float output = static_cast<float>(randomRange(static_cast<int>(from), static_cast<int>(to)));
+
+	return output * 0.01f;
+}
+
+
 
 /// <summary>
 /// handle user and system events/ input
@@ -187,7 +190,7 @@ void Game::processKeys(sf::Event t_event)
 	}
 	if (sf::Keyboard::K == t_event.key.code)
 	{
-		kick();
+		tableKick();
 	}
 }
 
@@ -268,7 +271,7 @@ void Game::collision()
 		{
 			m_balls[0].bounceCardinal(false);
 		}
-		kick();
+		tableKick();
 		 //sf::Vector2i newWindowPos = m_window.getPosition() + sf::Vector2i(0, 30);
 		 //m_window.setPosition(newWindowPos);
 	}
@@ -289,7 +292,7 @@ void Game::collision()
 
 		m_balls[0].redirect(reflectionVec);
 
-		kick();
+		tableKick();
 	}
 	else
 	{
@@ -303,7 +306,7 @@ void Game::collision()
 /// </summary>
 void Game::render()
 {
-	m_window.clear(sf::Color::White);
+	m_window.clear(sf::Color::Black);
 
 	m_window.draw(m_roundedTopBot);
 	m_window.draw(m_backgroundImage);
@@ -314,7 +317,7 @@ void Game::render()
 	
 	m_window.draw(m_balls[0].m_ballShape);
 
-	m_window.draw(m_ScoreBoard);
+	m_window.draw(m_scoreBoard);
 
 	m_window.display();
 }
@@ -333,20 +336,21 @@ void Game::setup()
 /// </summary>
 void Game::setupFontAndText()
 {
-	if (!m_ArialBlackfont.loadFromFile("ASSETS\\FONTS\\ariblk.ttf"))
+	if (!m_karnivorDigitFont.loadFromFile("ASSETS\\FONTS\\KARNIVOD.ttf"))
 	{
-		std::cout << "problem loading arial black font" << std::endl;
+		std::cout << "problem loading Karnivod font" << std::endl;
 	}
 }
 
 void Game::setupScoreBoard()
 {
-	m_ScoreBoard.setFont(m_ArialBlackfont);
-	m_ScoreBoard.setString("Hello World! I need roughly 30 chars here.");
-	m_ScoreBoard.setCharacterSize(24);
-	m_ScoreBoard.setFillColor(sf::Color::Green);
-	m_ScoreBoard.setOutlineColor(sf::Color::Black);
-	m_ScoreBoard.setPosition((WIDTH * 0.5f) - (m_ScoreBoard.getLocalBounds().width * 0.5f), m_ScoreBoard.getLocalBounds().height);
+	m_scoreBoard.setFont(m_karnivorDigitFont);
+	m_scoreBoard.setString("Hello World! I need 30 chars here.");
+	m_scoreBoard.setCharacterSize(28);
+	m_scoreBoard.setFillColor(sf::Color(255,191,0,255));
+	m_scoreBoard.setOutlineColor(sf::Color::Black);
+	m_scoreBoard.setOutlineThickness(8.0f);
+	m_scoreBoard.setPosition((WIDTH * 0.5f) - (m_scoreBoard.getLocalBounds().width * 0.5f), m_scoreBoard.getLocalBounds().height);
 }
 
 void Game::setupTable()
@@ -403,19 +407,19 @@ void Game::mouseScreenPosition(sf::Event t_event)
 		
 }
 
-void Game::kick()
+void Game::tableKick()
 {
-	float moveRandom = static_cast<float>(randomRange(8, -8));
+	float moveRandom = static_cast<float>(randomRange(4.0f, -4.0f));
 	m_view.move(sf::Vector2f(moveRandom, moveRandom));
-	float rotRandom = static_cast<float>(randomRange(-10, 10));
+	float rotRandom = static_cast<float>(randomRange(-0.50f, 0.50f));
 	m_view.rotate(rotRandom);
-	float zoomRandom = static_cast<float>(randomRange(-1, 1));
+	float zoomRandom = static_cast<float>(randomRange(-0.5f, 0.5f));
 	m_view.zoom(zoomRandom);
 	m_window.setView(m_view);
 
 	m_pinballAudio.m_sndRattle.play();
 
-	std::cout << "Random number is " << randomRange(-50, 50) << "\n";
+	std::cout << "Random number is " << randomRange(-50.0f, 50.0f) << "\n";
 }
 
 bool Game::screenSettle(sf::Time t_deltaTime)
@@ -441,10 +445,10 @@ void Game::updateScoreBoard()
 {
 	if (m_mouseCur.x >= 0 && m_mouseCur.x <= WIDTH && m_mouseCur.x >= 0 && m_mouseCur.y <= HEIGHT)
 	{
-		m_ScoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
+		m_scoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
 			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
-			"\nBall X: " + std::to_string(m_balls[0].m_positionNxt.x) +
-			" | Ball Y: " + std::to_string(m_balls[0].m_positionNxt.y));
+			"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
+			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)));
 	}
 }
 
@@ -456,25 +460,25 @@ sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 	if (t_pos.x - m_balls[0].M_RADIUS <= 0.0f)
 	{
 		m_balls[0].bounceCardinal(true);
-		kick();
+		tableKick();
 	}
 
 	if (t_pos.x + m_balls[0].M_RADIUS >= wide)
 	{
 		m_balls[0].bounceCardinal(true);
-		kick();
+		tableKick();
 	}
 		
 	if (t_pos.y - m_balls[0].M_RADIUS <= 0.0f)
 	{
 		m_balls[0].bounceCardinal(false);
-		kick();
+		tableKick();
 	}
 		
 	if (t_pos.y + m_balls[0].M_RADIUS >= high)
 	{
 		m_balls[0].bounceCardinal(false);
-		kick();
+		tableKick();
 	}
 	return t_pos;
 }

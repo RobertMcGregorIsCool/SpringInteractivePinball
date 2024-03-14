@@ -27,9 +27,6 @@ public:
 	/// main method for game
 	/// </summary>
 	void run();
-
-	
-
 	sf::Vector2f testPos(sf::Vector2f t_pos);
 
 private:
@@ -95,17 +92,15 @@ private:
 	sf::VertexArray m_flipperLine{sf::Lines}; // Line to show flipper angle
 	sf::VertexArray m_mouseLine {sf::Lines};
 	sf::VertexArray m_mouseLineReflect {sf::Lines};
-	float m_flipperTestPos = 0.0f;
-	const float m_flipperDegree = { (0.0f + 180.0f) * (M_PI / 180.0f) };
-	sf::Vector2f m_flipperDir = { sin(m_flipperDegree), cos(m_flipperDegree) };
-	sf::Vector2f m_testVec01;
+	//float m_flipperTestPos = 0.0f;
+	//const float m_flipperDegree = { (0.0f + 180.0f) * (M_PI / 180.0f) };
+	//sf::Vector2f m_flipperDir = { sin(m_flipperDegree), cos(m_flipperDegree) };
+	//sf::Vector2f m_testVec01;
 	sf::Vector2f m_testVec02;
 
 	PinballAud m_pinballAudio;
 
 	bool m_exitGame; // control exiting game
-
 };
-
 #endif // !GAME_HPP
 

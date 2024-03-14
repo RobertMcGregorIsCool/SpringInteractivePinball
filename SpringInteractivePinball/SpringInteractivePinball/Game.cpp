@@ -467,5 +467,3 @@ sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 	}
 	return t_pos;
 }
-
-

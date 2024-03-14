@@ -110,10 +110,10 @@ sf::Vector2f Game::v2fAbsolute(sf::Vector2f vector)
 	return sf::Vector2f(x, y);
 }
 
-//float Game::v2fCrossProduct(sf::Vector2f a, sf::Vector2f b)
-//{	// ? = sin-1 [ |a x b| / (|a| |b|) ].
-//	return asin ((v2fGetMagnitude(a * b)) / ())
-//}
+float Game::v2fCrossProduct(sf::Vector2f a, sf::Vector2f b)
+{
+	return a.x * b.y - a.y * b.x;
+}
 
 float Game::v2fDotProduct(sf::Vector2f lhs, sf::Vector2f rhs)
 {
@@ -124,6 +124,16 @@ float Game::v2fDotProduct(sf::Vector2f lhs, sf::Vector2f rhs)
 sf::Vector2f Game::v2fReflect(sf::Vector2f approach, sf::Vector2f normal)
 {
 	return approach - 2 * v2fDotProduct(approach, normal) * normal;
+}
+
+sf::Vector2f Game::v2fPerpendicularClockwise(sf::Vector2f vec)
+{
+	return sf::Vector2f(vec.y, -vec.x);
+}
+
+sf::Vector2f Game::v2fPerpendicularAntiClockwise(sf::Vector2f vec)
+{
+	return sf::Vector2f(-vec.y, vec.x);
 }
 
 int Game::randomRange(int from, int to)
@@ -157,6 +167,8 @@ void Game::processEvents()
 	sf::Event newEvent;
 	while (m_window.pollEvent(newEvent))
 	{
+		mouseScreenPosition(newEvent);
+
 		if ( sf::Event::Closed == newEvent.type) // window message
 		{
 			m_exitGame = true;
@@ -173,7 +185,7 @@ void Game::processEvents()
 		{
 			processMouseUp(newEvent);
 		}
-		mouseScreenPosition(newEvent);
+		
 	}
 }
 
@@ -299,6 +311,53 @@ void Game::collision()
 		m_bumper01.setFillColor(sf::Color::Cyan);
 	}
 
+	sf::Vector2f m_mouseCurFloat = sf::Vector2f(static_cast<float>(m_mouseCur.x), static_cast<float>(m_mouseCur.y));
+	if (v2fGetMagnitude(m_flipperTest.getPosition() - m_balls[0].getPositionCur()) < m_flipperTest.getRadius())
+	{
+		//m_testVec01 = v2fGetNormal(m_flipperTest.getPosition() + (m_flipperDir * m_flipperTest.getRadius()));
+		m_testVec02 = v2fGetNormal(m_balls[0].getPositionCur() - m_flipperTest.getPosition());
+		// m_flipperTestPos = v2fDotProduct(m_testVec01, m_testVec02)
+
+		sf::Vector2f straightUp {0.0f, 1.0f};
+		float flipperAngleR = atan2(v2fCrossProduct(straightUp, m_testVec02), v2fDotProduct(straightUp, m_testVec02));
+		float flipperAngleD = flipperAngleR * 180.0f / M_PI;
+		flipperAngleD += 180.0f;
+		std::cout << "The angle is " << flipperAngleD << ".\n\n";
+
+		m_flipperTest.setFillColor(sf::Color::Cyan);
+
+		//if (m_flipperTestPos < -0.1f && m_flipperTestPos > -0.9f)
+		if(flipperAngleD < 300.0f && flipperAngleD > 240.0f)
+		{
+			//std::cout << "Cursor inside circle!";
+			m_flipperTest.setFillColor(sf::Color::Green);
+		}
+	}
+	else
+	{
+		//std::cout << "Cursor outside circle!";
+		m_flipperTest.setFillColor(sf::Color(220, 220, 220, 255));
+	}
+	
+	
+
+	sf::Vertex point;
+	point.color = sf::Color::Red;
+	m_mouseLine.clear();
+	point.position = m_flipperTest.getPosition();
+	m_mouseLine.append(point);
+	point.position = m_mouseCurFloat;
+	m_mouseLine.append(point);
+
+	point.color = sf::Color::Yellow;
+	m_mouseLineReflect.clear();
+	point.position = m_mouseCurFloat;
+	m_mouseLineReflect.append(point);
+	sf::Vector2f lineBounce = m_flipperTest.getPosition() - m_mouseCurFloat;
+	lineBounce = v2fPerpendicularClockwise(lineBounce);
+
+	point.position = m_mouseCurFloat + lineBounce;
+	m_mouseLineReflect.append(point);
 }
 
 /// <summary>
@@ -313,7 +372,10 @@ void Game::render()
 
 	m_window.draw(m_testBox);
 	m_window.draw(m_bumper01);
-	
+	m_window.draw(m_flipperTest);
+	m_window.draw(m_flipperLine);
+	m_window.draw(m_mouseLine);
+	m_window.draw(m_mouseLineReflect);
 	
 	m_window.draw(m_balls[0].m_ballShape);
 
@@ -383,13 +445,28 @@ void Game::setupCollision()
 	m_bumper01.setFillColor(sf::Color::Cyan);
 	m_bumper01.setOutlineColor(sf::Color::Red);
 	m_bumper01.setOutlineThickness(-4.0f);
-	m_bumper01.setPosition(WIDTH * 0.5f - m_bumper01.getRadius() * 0.5f, HEIGHT * 0.25f);
+	m_bumper01.setPosition(WIDTH * 0.5f, HEIGHT * 0.25f); // -m_bumper01.getRadius() * 0.5f, HEIGHT * 0.25f);
 
 	m_roundedTopBot.setRadius(512.0f-32.0f);
 	m_roundedTopBot.setOrigin(m_roundedTopBot.getRadius(), m_roundedTopBot.getRadius());
 	m_roundedTopBot.setOutlineColor(sf::Color::Magenta);
 	m_roundedTopBot.setOutlineThickness(100.0f);
 	m_roundedTopBot.setPosition(WIDTH * 0.5f, HEIGHT * 0.5f);
+
+	m_flipperTest.setRadius(80.0f);
+	m_flipperTest.setOrigin(m_flipperTest.getRadius(), m_flipperTest.getRadius());
+	m_flipperTest.setFillColor(sf::Color(220, 220, 220, 255));
+	m_flipperTest.setOutlineColor(sf::Color::Black);
+	m_flipperTest.setOutlineThickness(1.0f);
+	m_flipperTest.setPosition(WIDTH * 0.5f, HEIGHT * 0.43f);
+
+	sf::Vertex point;
+	point.color = sf::Color::Blue;
+	m_flipperLine.clear();
+	point.position = m_flipperTest.getPosition();
+	m_flipperLine.append(point);
+	point.position = m_flipperTest.getPosition() + (m_flipperDir * m_flipperTest.getRadius());
+	m_flipperLine.append(point);
 }
 
 /// <summary>
@@ -411,9 +488,9 @@ void Game::tableKick()
 {
 	float moveRandom = static_cast<float>(randomRange(4.0f, -4.0f));
 	m_view.move(sf::Vector2f(moveRandom, moveRandom));
-	float rotRandom = static_cast<float>(randomRange(-0.50f, 0.50f));
+	float rotRandom = static_cast<float>(randomRange(-0.125f, 0.125f));
 	m_view.rotate(rotRandom);
-	float zoomRandom = static_cast<float>(randomRange(-0.5f, 0.5f));
+	float zoomRandom = static_cast<float>(randomRange(-0.125f, 0.125f));
 	m_view.zoom(zoomRandom);
 	m_window.setView(m_view);
 
@@ -448,7 +525,8 @@ void Game::updateScoreBoard()
 		m_scoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
 			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
 			"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
-			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)));
+			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)) +
+			"\nMouseVector is: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
 	}
 }
 

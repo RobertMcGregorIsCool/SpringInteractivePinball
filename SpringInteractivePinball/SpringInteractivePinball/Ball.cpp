@@ -5,6 +5,7 @@
 
 #include "Ball.h"
 #include "Game.h"
+#include "Hlp.h"
 #include <SFML/Graphics.hpp>
 
 
@@ -24,13 +25,13 @@ Ball::~Ball()
 void Ball::addForce(sf::Vector2f t_dir, float t_speed)
 {
 	m_velocityCur += (t_dir * t_speed);
-	m_velocityCur = Game::v2fClamp(m_velocityMax, -m_velocityMax, m_velocityCur);
+	m_velocityCur = Hlp::v2fClamp(m_velocityMax, -m_velocityMax, m_velocityCur);
 }
 
 void Ball::redirect(sf::Vector2f t_dir)
 {
-	sf::Vector2f normalDir = Game::v2fGetNormal(t_dir);
-	m_velocityCur = normalDir * Game::v2fGetMagnitude(m_velocityCur);
+	sf::Vector2f normalDir = Hlp::v2fGetNormal(t_dir);
+	m_velocityCur = normalDir * Hlp::v2fGetMagnitude(m_velocityCur);
 }
 
 void Ball::bounceCardinal(bool horizontal)

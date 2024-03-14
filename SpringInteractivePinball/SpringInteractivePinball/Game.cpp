@@ -4,6 +4,7 @@
 /// </summary>
 
 #include "Game.h"
+#include "Hlp.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -66,96 +67,6 @@ void Game::run()
 		render(); // as many as possible
 	}
 }
-sf::Vector2f Game::v2fGetNormal(sf::Vector2f velocity)
-{
-	float length = v2fGetMagnitude(velocity);
-	if (length != 0)
-		return sf::Vector2f(velocity.x / length, velocity.y / length);
-	else
-		return velocity;
-}
-float Game::v2fGetMagnitude(sf::Vector2f velocity)
-{
-	float length = sqrt(v2fGetMagSquared(velocity));
-	return length;
-}
-float Game::v2fGetMagSquared(sf::Vector2f velocity)
-{
-	return (velocity.x * velocity.x) + (velocity.y * velocity.y);
-}
-
-sf::Vector2f Game::v2fClamp(float max, float min, sf::Vector2f v2f)
-{
-	v2f.x = v2f.x > max ? max : v2f.x;
-	v2f.x = v2f.x < min ? min : v2f.x;
-	v2f.y = v2f.y > max ? max : v2f.y;
-	v2f.y = v2f.y < min ? min : v2f.y;
-	return v2f;
-}
-
-float Game::floatLerp(float a, float b, float t)
-{
-	return a + t * (b - a);
-}
-
-sf::Vector2f Game::v2fLerp(sf::Vector2f a, sf::Vector2f b, float t)
-{
-	return sf::Vector2f(floatLerp(a.x, b.x, t), floatLerp(a.y, b.y, t));
-}
-
-sf::Vector2f Game::v2fAbsolute(sf::Vector2f vector)
-{
-	float x = std::abs(vector.x);
-	float y = std::abs(vector.y);
-	return sf::Vector2f(x, y);
-}
-
-float Game::v2fCrossProduct(sf::Vector2f a, sf::Vector2f b)
-{
-	return a.x * b.y - a.y * b.x;
-}
-
-float Game::v2fDotProduct(sf::Vector2f lhs, sf::Vector2f rhs)
-{
-	// return v2fGetMagnitude(lhs) * v2fGetMagnitude(rhs) * cos(v2fCrossProduct(lhs,rhs));
-	return lhs.x * rhs.x + lhs.y * rhs.y;
-}
-
-sf::Vector2f Game::v2fReflect(sf::Vector2f approach, sf::Vector2f normal)
-{
-	return approach - 2 * v2fDotProduct(approach, normal) * normal;
-}
-
-sf::Vector2f Game::v2fPerpendicularClockwise(sf::Vector2f vec)
-{
-	return sf::Vector2f(vec.y, -vec.x);
-}
-
-sf::Vector2f Game::v2fPerpendicularAntiClockwise(sf::Vector2f vec)
-{
-	return sf::Vector2f(-vec.y, vec.x);
-}
-
-int Game::randomRange(int from, int to)
-{
-	int orderedFrom	= std::min(from,to);
-	int orderedTo	= std::max(to,from);
-
-	int randomNumber	= rand() % abs(orderedTo - orderedFrom) + orderedFrom;
-	return randomNumber;
-}
-
-float Game::randomRange(float from, float to)
-{
-	from *= 100.0f;
-	to *= 100.0f;
-	
-	float output = static_cast<float>(randomRange(static_cast<int>(from), static_cast<int>(to)));
-
-	return output * 0.01f;
-}
-
-
 
 /// <summary>
 /// handle user and system events/ input
@@ -185,10 +96,8 @@ void Game::processEvents()
 		{
 			processMouseUp(newEvent);
 		}
-		
 	}
 }
-
 
 /// <summary>
 /// deal with key presses from the user
@@ -202,7 +111,7 @@ void Game::processKeys(sf::Event t_event)
 	}
 	if (sf::Keyboard::K == t_event.key.code)
 	{
-		tableKick();
+		tableKick(0.1f);
 	}
 }
 
@@ -232,7 +141,7 @@ void Game::processMouseUp(sf::Event t_event)
 	if (sf::Mouse::Left == t_event.mouseButton.button)
 	{
 		// m_bigPlaneVelocity = displacement / 100.0f;
-		m_balls[0].addForce(v2fGetNormal(displacement), v2fGetMagnitude(displacement));
+		m_balls[0].addForce(Hlp::v2fGetNormal(displacement), Hlp::v2fGetMagnitude(displacement));
 		// m_bigHeading = headingD;
 		// m_bigPlaneSprite.setRotation(headingD);
 	}
@@ -259,7 +168,7 @@ void Game::update(sf::Time t_deltaTime)
 
 void Game::collision()
 {
-	sf::Vector2f normalisedDir = v2fGetNormal(m_balls[0].getVelocity());
+	sf::Vector2f normalisedDir = Hlp::v2fGetNormal(m_balls[0].getVelocity());
 	sf::Vector2f leadingPointOfBall = (normalisedDir * m_balls[0].M_RADIUS);
 	leadingPointOfBall = leadingPointOfBall + m_balls[0].getPositionCur();
 
@@ -283,7 +192,7 @@ void Game::collision()
 		{
 			m_balls[0].bounceCardinal(false);
 		}
-		tableKick();
+		tableKick(2.f);
 		 //sf::Vector2i newWindowPos = m_window.getPosition() + sf::Vector2i(0, 30);
 		 //m_window.setPosition(newWindowPos);
 	}
@@ -292,19 +201,19 @@ void Game::collision()
 		m_testBox.setFillColor(sf::Color::Yellow);
 	}
 
-	float bumperColDist = v2fGetMagnitude(m_balls[0].getPositionCur() - m_bumper01.getPosition());
+	float bumperColDist = Hlp::v2fGetMagnitude(m_balls[0].getPositionCur() - m_bumper01.getPosition());
 	
 	if (bumperColDist < m_bumper01.getRadius() + m_balls[0].M_RADIUS)
 	{
 		m_bumper01.setFillColor(sf::Color::Blue);
 
-		sf::Vector2f bumperNormal = v2fGetNormal(m_bumper01.getPosition() - m_balls[0].getPositionCur());
+		sf::Vector2f bumperNormal = Hlp::v2fGetNormal(m_bumper01.getPosition() - m_balls[0].getPositionCur());
 		
-		sf::Vector2f reflectionVec = v2fReflect(normalisedDir, bumperNormal);
+		sf::Vector2f reflectionVec = Hlp::v2fReflect(normalisedDir, bumperNormal);
 
 		m_balls[0].redirect(reflectionVec);
 
-		tableKick();
+		tableKick(3.0f);
 	}
 	else
 	{
@@ -312,34 +221,27 @@ void Game::collision()
 	}
 
 	sf::Vector2f m_mouseCurFloat = sf::Vector2f(static_cast<float>(m_mouseCur.x), static_cast<float>(m_mouseCur.y));
-	if (v2fGetMagnitude(m_flipperTest.getPosition() - m_balls[0].getPositionCur()) < m_flipperTest.getRadius())
+	if (Hlp::v2fGetMagnitude(m_flipperTest.getPosition() - m_balls[0].getPositionCur()) < m_flipperTest.getRadius())
 	{
-		//m_testVec01 = v2fGetNormal(m_flipperTest.getPosition() + (m_flipperDir * m_flipperTest.getRadius()));
-		m_testVec02 = v2fGetNormal(m_balls[0].getPositionCur() - m_flipperTest.getPosition());
-		// m_flipperTestPos = v2fDotProduct(m_testVec01, m_testVec02)
+		m_testVec02 = Hlp::v2fGetNormal(m_balls[0].getPositionCur() - m_flipperTest.getPosition());
 
 		sf::Vector2f straightUp {0.0f, 1.0f};
-		float flipperAngleR = atan2(v2fCrossProduct(straightUp, m_testVec02), v2fDotProduct(straightUp, m_testVec02));
+		float flipperAngleR = atan2(Hlp::v2fCrossProduct(straightUp, m_testVec02), Hlp::v2fDotProduct(straightUp, m_testVec02));
 		float flipperAngleD = flipperAngleR * 180.0f / M_PI;
 		flipperAngleD += 180.0f;
 		std::cout << "The angle is " << flipperAngleD << ".\n\n";
 
 		m_flipperTest.setFillColor(sf::Color::Cyan);
 
-		//if (m_flipperTestPos < -0.1f && m_flipperTestPos > -0.9f)
 		if(flipperAngleD < 300.0f && flipperAngleD > 240.0f)
 		{
-			//std::cout << "Cursor inside circle!";
 			m_flipperTest.setFillColor(sf::Color::Green);
 		}
 	}
 	else
 	{
-		//std::cout << "Cursor outside circle!";
 		m_flipperTest.setFillColor(sf::Color(220, 220, 220, 255));
 	}
-	
-	
 
 	sf::Vertex point;
 	point.color = sf::Color::Red;
@@ -354,7 +256,7 @@ void Game::collision()
 	point.position = m_mouseCurFloat;
 	m_mouseLineReflect.append(point);
 	sf::Vector2f lineBounce = m_flipperTest.getPosition() - m_mouseCurFloat;
-	lineBounce = v2fPerpendicularClockwise(lineBounce);
+	lineBounce = Hlp::v2fPerpendicularClockwise(lineBounce);
 
 	point.position = m_mouseCurFloat + lineBounce;
 	m_mouseLineReflect.append(point);
@@ -366,8 +268,9 @@ void Game::collision()
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
-
+	m_window.draw(m_floorImage);
 	m_window.draw(m_roundedTopBot);
+	
 	m_window.draw(m_backgroundImage);
 
 	m_window.draw(m_testBox);
@@ -418,11 +321,16 @@ void Game::setupScoreBoard()
 void Game::setupTable()
 {
 	m_backgroundImage.setOutlineColor(sf::Color::Magenta);
-	m_backgroundImage.setFillColor(sf::Color::Transparent);
+	m_backgroundImage.setFillColor(sf::Color::White);
 	m_backgroundImage.setOutlineThickness(m_backgroundImageThickness);
 	m_backgroundImage.setSize(sf::Vector2f(WIDTH, HEIGHT));
 	m_backgroundImage.setOrigin(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
 	m_backgroundImage.setPosition(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
+
+	m_floorImage.setFillColor(sf::Color::Black);
+	m_floorImage.setSize(sf::Vector2f(WIDTH * 2.0f, HEIGHT * 2.0f));
+	m_floorImage.setOrigin(sf::Vector2f(WIDTH, HEIGHT));
+	m_floorImage.setPosition(sf::Vector2f(WIDTH, HEIGHT));
 
 	m_view.setCenter(WIDTH * 0.5f, HEIGHT * 0.5f);
 	m_viewCenterAtStart = m_view.getCenter();
@@ -445,11 +353,12 @@ void Game::setupCollision()
 	m_bumper01.setFillColor(sf::Color::Cyan);
 	m_bumper01.setOutlineColor(sf::Color::Red);
 	m_bumper01.setOutlineThickness(-4.0f);
-	m_bumper01.setPosition(WIDTH * 0.5f, HEIGHT * 0.25f); // -m_bumper01.getRadius() * 0.5f, HEIGHT * 0.25f);
+	m_bumper01.setPosition(WIDTH * 0.5f, HEIGHT * 0.25f);
 
 	m_roundedTopBot.setRadius(512.0f-32.0f);
 	m_roundedTopBot.setOrigin(m_roundedTopBot.getRadius(), m_roundedTopBot.getRadius());
 	m_roundedTopBot.setOutlineColor(sf::Color::Magenta);
+	m_roundedTopBot.setFillColor(sf::Color::Transparent);
 	m_roundedTopBot.setOutlineThickness(100.0f);
 	m_roundedTopBot.setPosition(WIDTH * 0.5f, HEIGHT * 0.5f);
 
@@ -484,19 +393,19 @@ void Game::mouseScreenPosition(sf::Event t_event)
 		
 }
 
-void Game::tableKick()
+void Game::tableKick(float scalar)
 {
-	float moveRandom = static_cast<float>(randomRange(4.0f, -4.0f));
+	float moveRandom = static_cast<float>(Hlp::randomRange(4.0f, -4.0f) * scalar);
 	m_view.move(sf::Vector2f(moveRandom, moveRandom));
-	float rotRandom = static_cast<float>(randomRange(-0.125f, 0.125f));
+	float rotRandom = static_cast<float>(Hlp::randomRange(-0.125f, 0.125f) * scalar);
 	m_view.rotate(rotRandom);
-	float zoomRandom = static_cast<float>(randomRange(-0.125f, 0.125f));
+	float zoomRandom = static_cast<float>(Hlp::randomRange(-0.125f, 0.125f) * scalar);
 	m_view.zoom(zoomRandom);
 	m_window.setView(m_view);
 
 	m_pinballAudio.m_sndRattle.play();
 
-	std::cout << "Random number is " << randomRange(-50.0f, 50.0f) << "\n";
+	std::cout << "Random number is " << Hlp::randomRange(-50.0f, 50.0f) << "\n";
 }
 
 bool Game::screenSettle(sf::Time t_deltaTime)
@@ -507,16 +416,14 @@ bool Game::screenSettle(sf::Time t_deltaTime)
 	}
 	else
 	{
-		m_view.setCenter(v2fLerp(m_view.getCenter(), sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f), t_deltaTime.asSeconds() * m_viewReturnSpeed));
-		m_view.setRotation(floatLerp(m_view.getRotation(), 0.0f, t_deltaTime.asSeconds() * m_viewReturnSpeed));
-		m_view.setSize(v2fLerp(m_view.getSize(), sf::Vector2f(WIDTH, HEIGHT), t_deltaTime.asSeconds() * m_viewReturnSpeed));
+		m_view.setCenter(Hlp::v2fLerp(m_view.getCenter(), sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f), t_deltaTime.asSeconds() * m_viewReturnSpeed));
+		m_view.setRotation(Hlp::floatLerp(m_view.getRotation(), 0.0f, t_deltaTime.asSeconds() * m_viewReturnSpeed));
+		m_view.setSize(Hlp::v2fLerp(m_view.getSize(), sf::Vector2f(WIDTH, HEIGHT), t_deltaTime.asSeconds() * m_viewReturnSpeed));
 
 		m_window.setView(m_view);
 		return false;
 	}	
 }
-
-
 
 void Game::updateScoreBoard()
 {
@@ -526,7 +433,7 @@ void Game::updateScoreBoard()
 			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
 			"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
 			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)) +
-			"\nMouseVector is: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
+			"\nMouseVec: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
 	}
 }
 
@@ -538,25 +445,25 @@ sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 	if (t_pos.x - m_balls[0].M_RADIUS <= 0.0f)
 	{
 		m_balls[0].bounceCardinal(true);
-		tableKick();
+		tableKick(0.1f);
 	}
 
 	if (t_pos.x + m_balls[0].M_RADIUS >= wide)
 	{
 		m_balls[0].bounceCardinal(true);
-		tableKick();
+		tableKick(0.1f);
 	}
 		
 	if (t_pos.y - m_balls[0].M_RADIUS <= 0.0f)
 	{
 		m_balls[0].bounceCardinal(false);
-		tableKick();
+		tableKick(0.1f);
 	}
 		
 	if (t_pos.y + m_balls[0].M_RADIUS >= high)
 	{
 		m_balls[0].bounceCardinal(false);
-		tableKick();
+		tableKick(0.1f);
 	}
 	return t_pos;
 }

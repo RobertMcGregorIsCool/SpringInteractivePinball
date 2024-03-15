@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <iostream>
 
 Collision::Collision()
 {
@@ -13,7 +14,7 @@ Collision::~Collision()
 {
 }
 
-void Collision::setupCollision()
+void Collision::setupCollision() // Possibly should be constructor?
 {
 	m_testBox.setOrigin(100.0f, 100.0f);
 	m_testBox.setFillColor(sf::Color::Yellow);
@@ -52,31 +53,31 @@ void Collision::setupCollision()
 	m_flipperLine.append(point);
 }
 
-void Collision::collision()
+void Collision::collision(Ball t_ball, sf::Vector2i t_mouseCur)
 {
-	sf::Vector2f normalisedDir = Hlp::v2fGetNormal(m_balls[0].getVelocity());
-	sf::Vector2f leadingPointOfBall = (normalisedDir * m_balls[0].M_RADIUS);
-	leadingPointOfBall = leadingPointOfBall + m_balls[0].getPositionCur();
+	sf::Vector2f normalisedDir = Hlp::v2fGetNormal(t_ball.getVelocity());
+	sf::Vector2f leadingPointOfBall = (normalisedDir * t_ball.M_RADIUS);
+	leadingPointOfBall = leadingPointOfBall + t_ball.getPositionCur();
 
 	if (m_testBoxRect.contains(leadingPointOfBall))
 	{
 		m_testBox.setFillColor(sf::Color::Green);
 
-		if (m_balls[0].getPositionCur().x < m_testBox.getGlobalBounds().left)
+		if (t_ball.getPositionCur().x < m_testBox.getGlobalBounds().left)
 		{
-			m_balls[0].bounceCardinal(true);
+			t_ball.bounceCardinal(true);
 		}
-		else if (m_balls[0].getPositionCur().x > m_testBox.getGlobalBounds().left + m_testBox.getGlobalBounds().width)
+		else if (t_ball.getPositionCur().x > m_testBox.getGlobalBounds().left + m_testBox.getGlobalBounds().width)
 		{
-			m_balls[0].bounceCardinal(true);
+			t_ball.bounceCardinal(true);
 		}
-		else if (m_balls[0].getPositionCur().y < m_testBox.getGlobalBounds().top)
+		else if (t_ball.getPositionCur().y < m_testBox.getGlobalBounds().top)
 		{
-			m_balls[0].bounceCardinal(false);
+			t_ball.bounceCardinal(false);
 		}
 		else
 		{
-			m_balls[0].bounceCardinal(false);
+			t_ball.bounceCardinal(false);
 		}
 		tableKick(2.f);
 		//sf::Vector2i newWindowPos = m_window.getPosition() + sf::Vector2i(0, 30);
@@ -87,17 +88,17 @@ void Collision::collision()
 		m_testBox.setFillColor(sf::Color::Yellow);
 	}
 
-	float bumperColDist = Hlp::v2fGetMagnitude(m_balls[0].getPositionCur() - m_bumper01.getPosition());
+	float bumperColDist = Hlp::v2fGetMagnitude(t_ball.getPositionCur() - m_bumper01.getPosition());
 
-	if (bumperColDist < m_bumper01.getRadius() + m_balls[0].M_RADIUS)
+	if (bumperColDist < m_bumper01.getRadius() + t_ball.M_RADIUS)
 	{
 		m_bumper01.setFillColor(sf::Color::Blue);
 
-		sf::Vector2f bumperNormal = Hlp::v2fGetNormal(m_bumper01.getPosition() - m_balls[0].getPositionCur());
+		sf::Vector2f bumperNormal = Hlp::v2fGetNormal(m_bumper01.getPosition() - t_ball.getPositionCur());
 
 		sf::Vector2f reflectionVec = Hlp::v2fReflect(normalisedDir, bumperNormal);
 
-		m_balls[0].redirect(reflectionVec);
+		t_ball.redirect(reflectionVec);
 
 		tableKick(3.0f);
 	}
@@ -106,10 +107,10 @@ void Collision::collision()
 		m_bumper01.setFillColor(sf::Color::Cyan);
 	}
 
-	sf::Vector2f m_mouseCurFloat = sf::Vector2f(static_cast<float>(m_mouseCur.x), static_cast<float>(m_mouseCur.y));
-	if (Hlp::v2fGetMagnitude(m_flipperTest.getPosition() - m_balls[0].getPositionCur()) < m_flipperTest.getRadius())
+	sf::Vector2f m_mouseCurFloat = sf::Vector2f(static_cast<float>(t_mouseCur.x), static_cast<float>(t_mouseCur.y));
+	if (Hlp::v2fGetMagnitude(m_flipperTest.getPosition() - t_ball.getPositionCur()) < m_flipperTest.getRadius())
 	{
-		m_testVec02 = Hlp::v2fGetNormal(m_balls[0].getPositionCur() - m_flipperTest.getPosition());
+		m_testVec02 = Hlp::v2fGetNormal(t_ball.getPositionCur() - m_flipperTest.getPosition());
 
 		sf::Vector2f straightUp {0.0f, 1.0f};
 		float flipperAngleR = atan2(Hlp::v2fCrossProduct(straightUp, m_testVec02), Hlp::v2fDotProduct(straightUp, m_testVec02));

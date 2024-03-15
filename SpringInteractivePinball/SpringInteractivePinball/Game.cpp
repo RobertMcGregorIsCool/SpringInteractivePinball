@@ -163,7 +163,12 @@ void Game::update(sf::Time t_deltaTime)
 	m_balls[0].setPosition(testPos(m_balls[0].m_positionNxt));
 
 	updateScoreBoard();
-	m_col.collision();
+
+	for (int i = 0; i < m_ballsCurAmount; i++)
+	{
+		m_col.collision(m_balls[i], m_mouseCur);
+	}
+
 	screenSettle(t_deltaTime);
 }
 
@@ -177,24 +182,7 @@ void Game::update(sf::Time t_deltaTime)
 /// </summary>
 void Game::render()
 {
-	m_window.clear(sf::Color::Black);
-	m_window.draw(m_floorImage);
-	m_window.draw(m_col.m_roundedTopBot);
-	
-	m_window.draw(m_backgroundImage);
-
-	m_window.draw(m_col.m_testBox);
-	m_window.draw(m_bumper01);
-	m_window.draw(m_flipperTest);
-	m_window.draw(m_flipperLine);
-	m_window.draw(m_mouseLine);
-	m_window.draw(m_mouseLineReflect);
-	
-	m_window.draw(m_balls[0].m_ballShape);
-
-	m_window.draw(m_scoreBoard);
-
-	m_window.display();
+	m_render.render(m_window, m_balls);
 }
 
 void Game::setup()
@@ -308,8 +296,8 @@ void Game::updateScoreBoard()
 		m_scoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
 			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
 			"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
-			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)) +
-			"\nMouseVec: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
+			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)));// +
+			//"\nMouseVec: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
 	}
 }
 

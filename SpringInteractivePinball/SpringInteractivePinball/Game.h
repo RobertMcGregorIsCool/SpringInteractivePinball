@@ -12,10 +12,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include "Ball.h"
+#include "Collision.h"
+#include "Render.h"
 #include "PinballAud.h"
 #include <cstdlib>
-
-
 
 class Game
 {
@@ -40,8 +40,6 @@ private:
 
 	void update(sf::Time t_deltaTime);
 
-	
-
 	void processEvents();
 	void processKeys(sf::Event t_event);
 	void processMouseDown(sf::Event t_event);
@@ -54,18 +52,12 @@ private:
 
 	void updateScoreBoard();
 
-	
-
 	const float m_nudgeScalar = 0.5f;
 
 	Collision m_col;
 
 	sf::RenderWindow m_window; // main SFML window
-	sf::View m_view; // View onto table
-
-	sf::RectangleShape m_floorImage;
-	sf::RectangleShape m_backgroundImage; // backgroundImage
-	float m_backgroundImageThickness = -8.0f;
+	Render m_render;
 
 	// sf::Font m_ArialBlackfont; // font used by message
 	sf::Font m_karnivorDigitFont; // font used by message
@@ -80,19 +72,14 @@ private:
 	sf::Vector2f m_viewCenterAtStart;
 	float m_viewReturnSpeed = 32.0f;
 
-	Ball m_balls[4];
+	static constexpr int M_MAX_BALLS{ 4 };
+	int m_ballsCurAmount = 1.0f;
+	Ball m_balls[M_MAX_BALLS];
 
 	
-
-	
-	
-
-	sf::VertexArray m_mouseLine {sf::Lines};
-	sf::VertexArray m_mouseLineReflect {sf::Lines};
 	//float m_flipperTestPos = 0.0f;
 	
-	//sf::Vector2f m_testVec01;
-	sf::Vector2f m_testVec02;
+	
 
 	PinballAud m_pinballAudio;
 

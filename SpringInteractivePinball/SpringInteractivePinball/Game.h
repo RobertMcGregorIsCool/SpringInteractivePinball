@@ -34,14 +34,14 @@ private:
 	void setupFontAndText();
 	void setupScoreBoard();
 	void setupTable();
-	void setupCollision();
+
 	void setupSprite();
 	
 	void render();
 
 	void update(sf::Time t_deltaTime);
 
-	void collision();
+	
 
 	void processEvents();
 	void processKeys(sf::Event t_event);
@@ -55,10 +55,11 @@ private:
 
 	void updateScoreBoard();
 
-	static const unsigned int WIDTH = 600U;
-	static const unsigned int HEIGHT = 960U;
+	
 
 	const float m_nudgeScalar = 0.5f;
+
+	Collision m_col;
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::View m_view; // View onto table
@@ -82,8 +83,7 @@ private:
 
 	Ball m_balls[4];
 
-	sf::RectangleShape m_testBox;
-	sf::Rect<float> m_testBoxRect;
+	
 
 	sf::CircleShape m_bumper01;
 	sf::CircleShape m_roundedTopBot;
@@ -93,8 +93,8 @@ private:
 	sf::VertexArray m_mouseLine {sf::Lines};
 	sf::VertexArray m_mouseLineReflect {sf::Lines};
 	//float m_flipperTestPos = 0.0f;
-	//const float m_flipperDegree = { (0.0f + 180.0f) * (M_PI / 180.0f) };
-	//sf::Vector2f m_flipperDir = { sin(m_flipperDegree), cos(m_flipperDegree) };
+	const float m_flipperDegree = { (0.0f + 180.0f) * (M_PI / 180.0f) }; // Used to show flipper angle
+	sf::Vector2f m_flipperDir = { sin(m_flipperDegree), cos(m_flipperDegree) };// Used to show flipper angle
 	//sf::Vector2f m_testVec01;
 	sf::Vector2f m_testVec02;
 

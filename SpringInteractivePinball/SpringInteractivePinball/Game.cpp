@@ -18,7 +18,7 @@
 /// load and setup thne image
 /// </summary>
 Game::Game() :
-	m_window{ sf::VideoMode{ WIDTH, HEIGHT, 32U }, "Spring Interactive Pinball!" },
+	m_window{ sf::VideoMode{ Globals::WIDTH, Globals::HEIGHT, 32U }, "Spring Interactive Pinball!" },
 	m_exitGame{false} //when true game will exit
 {
 	setup();
@@ -179,11 +179,11 @@ void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 	m_window.draw(m_floorImage);
-	m_window.draw(m_roundedTopBot);
+	m_window.draw(m_col.m_roundedTopBot);
 	
 	m_window.draw(m_backgroundImage);
 
-	m_window.draw(m_testBox);
+	m_window.draw(m_col.m_testBox);
 	m_window.draw(m_bumper01);
 	m_window.draw(m_flipperTest);
 	m_window.draw(m_flipperLine);
@@ -203,7 +203,7 @@ void Game::setup()
 	setupScoreBoard();
 	setupTable();
 	setupSprite(); // load texture
-	setupCollision();
+	m_col.setupCollision();
 }
 
 /// <summary>
@@ -233,18 +233,18 @@ void Game::setupTable()
 	m_backgroundImage.setOutlineColor(sf::Color::Magenta);
 	m_backgroundImage.setFillColor(sf::Color::White);
 	m_backgroundImage.setOutlineThickness(m_backgroundImageThickness);
-	m_backgroundImage.setSize(sf::Vector2f(Globals::WIDTH, HEIGHT));
-	m_backgroundImage.setOrigin(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
-	m_backgroundImage.setPosition(sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f));
+	m_backgroundImage.setSize(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
+	m_backgroundImage.setOrigin(sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f));
+	m_backgroundImage.setPosition(sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f));
 
 	m_floorImage.setFillColor(sf::Color::Black);
-	m_floorImage.setSize(sf::Vector2f(WIDTH * 2.0f, HEIGHT * 2.0f));
-	m_floorImage.setOrigin(sf::Vector2f(WIDTH, HEIGHT));
-	m_floorImage.setPosition(sf::Vector2f(WIDTH, HEIGHT));
+	m_floorImage.setSize(sf::Vector2f(Globals::WIDTH * 2.0f, Globals::HEIGHT * 2.0f));
+	m_floorImage.setOrigin(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
+	m_floorImage.setPosition(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
 
-	m_view.setCenter(WIDTH * 0.5f, HEIGHT * 0.5f);
+	m_view.setCenter(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f);
 	m_viewCenterAtStart = m_view.getCenter();
-	m_view.reset(sf::FloatRect(0.0f, 0.0f, WIDTH, HEIGHT));
+	m_view.reset(sf::FloatRect(0.0f, 0.0f, Globals::WIDTH, Globals::HEIGHT));
 
 	m_window.setView(m_view);
 }
@@ -286,15 +286,15 @@ void Game::tableKick(float scalar)
 
 bool Game::screenSettle(sf::Time t_deltaTime)
 {
-	if (m_view.getCenter() == sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f) && m_view.getRotation() == 0.0f && m_view.getSize() == sf::Vector2f(WIDTH, HEIGHT))
+	if (m_view.getCenter() == sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f) && m_view.getRotation() == 0.0f && m_view.getSize() == sf::Vector2f(Globals::WIDTH, Globals::HEIGHT))
 	{
 		return true;
 	}
 	else
 	{
-		m_view.setCenter(Hlp::v2fLerp(m_view.getCenter(), sf::Vector2f(WIDTH * 0.5f, HEIGHT * 0.5f), t_deltaTime.asSeconds() * m_viewReturnSpeed));
+		m_view.setCenter(Hlp::v2fLerp(m_view.getCenter(), sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f), t_deltaTime.asSeconds() * m_viewReturnSpeed));
 		m_view.setRotation(Hlp::floatLerp(m_view.getRotation(), 0.0f, t_deltaTime.asSeconds() * m_viewReturnSpeed));
-		m_view.setSize(Hlp::v2fLerp(m_view.getSize(), sf::Vector2f(WIDTH, HEIGHT), t_deltaTime.asSeconds() * m_viewReturnSpeed));
+		m_view.setSize(Hlp::v2fLerp(m_view.getSize(), sf::Vector2f(Globals::WIDTH, Globals::HEIGHT), t_deltaTime.asSeconds() * m_viewReturnSpeed));
 
 		m_window.setView(m_view);
 		return false;
@@ -303,7 +303,7 @@ bool Game::screenSettle(sf::Time t_deltaTime)
 
 void Game::updateScoreBoard()
 {
-	if (m_mouseCur.x >= 0 && m_mouseCur.x <= WIDTH && m_mouseCur.x >= 0 && m_mouseCur.y <= HEIGHT)
+	if (m_mouseCur.x >= 0 && m_mouseCur.x <= Globals::WIDTH && m_mouseCur.x >= 0 && m_mouseCur.y <= Globals::HEIGHT)
 	{
 		m_scoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
 			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
@@ -315,8 +315,8 @@ void Game::updateScoreBoard()
 
 sf::Vector2f Game::testPos(sf::Vector2f t_pos)
 {
-	float wide = static_cast<float>(WIDTH);
-	float high = static_cast<float>(HEIGHT);
+	float wide = static_cast<float>(Globals::WIDTH);
+	float high = static_cast<float>(Globals::HEIGHT);
 	
 	if (t_pos.x - m_balls[0].M_RADIUS <= 0.0f)
 	{

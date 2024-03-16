@@ -47,8 +47,8 @@ private:
 
 	void mouseScreenPosition(sf::Event t_event);
 
-	void tableKick(float scalar = 1.0f);
-	bool screenSettle(sf::Time t_deltaTime);
+	//void tableKick(float scalar = 1.0f);
+	//bool screenSettle(sf::Time t_deltaTime);
 
 	void updateScoreBoard();
 
@@ -57,7 +57,7 @@ private:
 	Collision m_col;
 
 	sf::RenderWindow m_window; // main SFML window
-	Render m_render;
+	Render m_render = Render ( m_window );
 
 	// sf::Font m_ArialBlackfont; // font used by message
 	sf::Font m_karnivorDigitFont; // font used by message
@@ -69,8 +69,8 @@ private:
 	sf::Vector2f m_mouseUp; // Reluctantly have to use this, boo.
 
 	bool m_screenKicked = false;
-	sf::Vector2f m_viewCenterAtStart;
-	float m_viewReturnSpeed = 32.0f;
+	
+	
 
 	static constexpr int M_MAX_BALLS{ 4 };
 	int m_ballsCurAmount = 1.0f;

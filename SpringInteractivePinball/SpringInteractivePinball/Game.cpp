@@ -159,13 +159,16 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_balls[i].update(t_deltaTime);
 		m_collision.detect(m_balls[i]);
+		std::cout << "m_velocityCur is : " << m_balls[i].getVelocity().x << " | " << m_balls[i].getVelocity().y << ".\n\n";
 		if (m_collision.m_kickTest)
 		{
 			std::cout << "Trying to kick ball# " << i << "!\n\n";
 			m_balls[i].setVelocity(sf::Vector2f(m_balls[i].getVelocity().x * -1, m_balls[i].getVelocity().y * -1));
 			m_collision.m_kickTest = false;
 		}
+		std::cout << "m_velocityCur is : " << m_balls[i].getVelocity().x << " | " << m_balls[i].getVelocity().y << ".\n\n";
 		m_balls[i].setPosition(m_balls[i].m_positionNxt);
+		std::cout << "m_velocityCur is : " << m_balls[i].getVelocity().x << " | " << m_balls[i].getVelocity().y << ".\n\n";
 	}
 	/*if (m_col.m_kickTest)
 	{

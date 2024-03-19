@@ -13,7 +13,7 @@ public:
 	~Collision();
 
 	// sf::Vector2f testPos(Ball t_ball);
-	sf::Vector2f detect(Ball t_ball);
+	void detect(Ball t_ball);
 	void boundsCheck(sf::Vector2f t_point, float top, float bottom, float left, float right);
 	void bumperCheck(Ball t_ball, sf::Vector2f t_normalisedDir);
 	void flipperCheck(Ball t_ball);

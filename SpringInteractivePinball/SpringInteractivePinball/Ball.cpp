@@ -50,13 +50,16 @@ void Ball::redirect(sf::Vector2f t_dir)
 void Ball::update(sf::Time t_deltaTime)
 {// Continually called in Game::Update()?
 	m_positionNxt = m_positionCur + (m_velocityCur * t_deltaTime.asSeconds());// Multiply this by deltatime?
+	std::cout << "m_velocityCur is : " << m_velocityCur.x << " | " << m_velocityCur.y << ".\n\n";
 }
 
 void Ball::setPosition(sf::Vector2f newPosition) 
 {
+	std::cout << "m_velocityCur is : " << m_velocityCur.x << " | " << m_velocityCur.y << ".\n\n";
 	m_positionCur = newPosition;
 
 	m_ballShape.setPosition(newPosition);
+	std::cout << "m_velocityCur is : " << m_velocityCur.x << " | " << m_velocityCur.y << ".\n\n";
 	// Sprite.setPosition(newPosition) will go here soon.
 }
 
@@ -67,7 +70,9 @@ sf::Vector2f Ball::getVelocity()
 
 void Ball::setVelocity(sf::Vector2f t_velocity)
 {
+	std::cout << "Ball velocity before change: " << m_velocityCur.x << " | " << m_velocityCur.y << ".\n\n";
 	m_velocityCur = t_velocity;
+	std::cout << "Ball velocity after change: " << m_velocityCur.x << " | " << m_velocityCur.y << ".\n\n";
 }
 
 sf::Vector2f Ball::getPositionCur()

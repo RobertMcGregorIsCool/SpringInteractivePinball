@@ -47,7 +47,7 @@ Collision::Collision()
 
 Collision::~Collision(){}
 
-sf::Vector2f Collision::detect(Ball t_ball)
+void Collision::detect(Ball t_ball)
 {
 	/*if (m_kickTest)
 	{
@@ -68,8 +68,10 @@ sf::Vector2f Collision::detect(Ball t_ball)
 	//if (t_ball.m_positionNxt.x - t_ball.M_RADIUS <= 0.0f)
 	if (leadingPointOfBall.x <= 0.0f || leadingPointOfBall.x >= wide)
 	{
+		//std::cout << "Ball velocity before change is " << t_ball.getVelocity().x << ".\n\n";
 		t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x * -1, t_ball.getVelocity().y));
-		std::cout << "Bouncing Horizontal!\n\n";
+		//std::cout << "Ball velocity after change is " << t_ball.getVelocity().x << ".\n\n";
+		//std::cout << "Bouncing Horizontal!\n\n";
 		// t_ball.bounceCardinal(true);//m_render.tableKick(0.1f);
 	}
 
@@ -89,6 +91,8 @@ sf::Vector2f Collision::detect(Ball t_ball)
 		//t_ball.bounceCardinal(false);//m_render.tableKick(0.1f);
 	}
 
+	std::cout << "m_velocityCur is : " << t_ball.getVelocity().x << " | " << t_ball.getVelocity().y << ".\n\n";
+
 	//if (t_ball.m_positionNxt.y + t_ball.M_RADIUS >= high)
 	//if (leadingPointOfBall.y >= high)
 	//{
@@ -96,7 +100,6 @@ sf::Vector2f Collision::detect(Ball t_ball)
 	//	std::cout << "Bouncing Vertical!\n\n";
 	//	//t_ball.bounceCardinal(false);//m_render.tableKick(0.1f);
 	//}
-	
 	
 
 	//if (m_testBoxRect.contains(leadingPointOfBall))
@@ -135,7 +138,7 @@ sf::Vector2f Collision::detect(Ball t_ball)
 
 	// t_ball.m_positionNxt = testPos(t_ball);
 
-	return t_ball.m_positionNxt;
+	//return t_ball.m_positionNxt;
 }
 
 void Collision::boundsCheck(sf::Vector2f t_point, float top, float bottom, float left, float right)

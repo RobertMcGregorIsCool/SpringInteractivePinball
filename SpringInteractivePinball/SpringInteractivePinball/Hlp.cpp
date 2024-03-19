@@ -19,7 +19,7 @@ float Hlp::v2fGetMagSquared(sf::Vector2f velocity)
 }
 
 sf::Vector2f Hlp::v2fClamp(float max, float min, sf::Vector2f v2f)
-{
+{// Do this with Max / Min!
 	v2f.x = v2f.x > max ? max : v2f.x;
 	v2f.x = v2f.x < min ? min : v2f.x;
 	v2f.y = v2f.y > max ? max : v2f.y;

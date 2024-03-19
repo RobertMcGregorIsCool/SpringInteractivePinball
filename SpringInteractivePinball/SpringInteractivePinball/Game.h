@@ -26,13 +26,12 @@ public:
 	/// main method for game
 	/// </summary>
 	void run();
-	sf::Vector2f testPos(sf::Vector2f t_pos);
+	
 
 private:
 	void setup();
 	void setupFontAndText();
 	void setupScoreBoard();
-	void setupTable();
 
 	void setupSprite();
 	
@@ -43,9 +42,7 @@ private:
 	void processEvents();
 	void processKeys(sf::Event t_event);
 	void processMouseDown(sf::Event t_event);
-	void processMouseUp(sf::Event t_event);	
-
-	void mouseScreenPosition(sf::Event t_event);
+	void processMouseUp(sf::Event t_event);
 
 	//void tableKick(float scalar = 1.0f);
 	//bool screenSettle(sf::Time t_deltaTime);
@@ -54,10 +51,10 @@ private:
 
 	const float m_nudgeScalar = 0.5f;
 
-	Collision m_col;
+	Collision m_collision;
 
 	sf::RenderWindow m_window; // main SFML window
-	Render m_render = Render ( m_window );
+	Render m_render{ m_window, m_collision };
 
 	// sf::Font m_ArialBlackfont; // font used by message
 	sf::Font m_karnivorDigitFont; // font used by message
@@ -70,20 +67,17 @@ private:
 
 	bool m_screenKicked = false;
 	
-	
-
 	static constexpr int M_MAX_BALLS{ 4 };
-	int m_ballsCurAmount = 1.0f;
+	int m_ballsCurAmount = 1;
 	Ball m_balls[M_MAX_BALLS];
 
-	
 	//float m_flipperTestPos = 0.0f;
 	
-	
-
 	PinballAud m_pinballAudio;
 
 	bool m_exitGame; // control exiting game
+
+	
 };
 #endif // !GAME_HPP
 

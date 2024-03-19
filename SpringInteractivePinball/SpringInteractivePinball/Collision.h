@@ -12,8 +12,12 @@ public:
 	Collision();
 	~Collision();
 
-	void setupCollision();
-	void collision(Ball t_ball, sf::Vector2i t_mouseCur);
+	// sf::Vector2f testPos(Ball t_ball);
+	sf::Vector2f detect(Ball t_ball);
+	void boundsCheck(sf::Vector2f t_point, float top, float bottom, float left, float right);
+	void bumperCheck(Ball t_ball, sf::Vector2f t_normalisedDir);
+	void flipperCheck(Ball t_ball);
+	void visualDebugLines(sf:: Vector2i t_mouseCur);
 
 	sf::RectangleShape m_testBox;
 
@@ -30,10 +34,12 @@ public:
 	sf::VertexArray m_mouseLine {sf::Lines};
 	sf::VertexArray m_mouseLineReflect {sf::Lines};
 
+	bool m_kickTest = false;
+
 private:	
 	sf::Rect<float> m_testBoxRect;
 
-	const float m_flipperDegree = { (0.0f + 180.0f) * (M_PI / 180.0f) }; // Used to show flipper angle
+	const float m_flipperDegree = { (0.0f + 180.0f) * (static_cast<float>(M_PI) / 180.0f) }; // Used to show flipper angle
 	sf::Vector2f m_flipperDir = { sin(m_flipperDegree), cos(m_flipperDegree) };// Used to show flipper angle
 };
 

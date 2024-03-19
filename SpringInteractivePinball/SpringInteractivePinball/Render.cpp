@@ -1,12 +1,12 @@
 #include <iostream>
 
 #include "Render.h"
-#include "Collision.h"
+// #include "Collision.h"
 #include "Globals.h"
 #include "Hlp.h"
-#include "PinballAud.h"
+//#include "PinballAud.h"
 
-Render::Render(sf::RenderWindow& t_window) : m_window(t_window)
+Render::Render(sf::RenderWindow& t_window, Collision& t_col) : m_window(t_window), m_collision(t_col)
 {
 	m_backgroundImage.setOutlineColor(sf::Color::Magenta);
 	m_backgroundImage.setFillColor(sf::Color::White);
@@ -23,25 +23,25 @@ Render::Render(sf::RenderWindow& t_window) : m_window(t_window)
 	m_view.setCenter(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f);
 	m_viewCenterAtStart = m_view.getCenter();
 	m_view.reset(sf::FloatRect(0.0f, 0.0f, Globals::WIDTH, Globals::HEIGHT));
+
+	m_window.setView(m_view);
 }
 
-Render::~Render()
-{
-}
+Render::~Render(){}
 
 void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 {
 	m_window.clear(sf::Color::Black);
 	m_window.draw(m_backgroundImage);
 	m_window.draw(m_floorImage);
-	m_window.draw(m_col.m_roundedTopBot);
+	m_window.draw(m_collision.m_roundedTopBot);
 
-	m_window.draw(m_col.m_testBox);
-	m_window.draw(m_col.m_bumper01);
-	m_window.draw(m_col.m_flipperTest);
-	m_window.draw(m_col.m_flipperLine);
-	m_window.draw(m_col.m_mouseLine);
-	m_window.draw(m_col.m_mouseLineReflect);
+	m_window.draw(m_collision.m_testBox);
+	m_window.draw(m_collision.m_bumper01);
+	m_window.draw(m_collision.m_flipperTest);
+	m_window.draw(m_collision.m_flipperLine);
+	m_window.draw(m_collision.m_mouseLine);
+	m_window.draw(m_collision.m_mouseLineReflect);
 
 	m_window.draw(t_balls[0].m_ballShape);
 
@@ -60,7 +60,7 @@ void Render::tableKick(float scalar)
 	m_view.zoom(zoomRandom);
 	m_window.setView(m_view);
 
-	m_pinballAudio.m_sndRattle.play();
+	// m_pinballAudio.m_sndRattle.play();
 
 	std::cout << "Random number is " << Hlp::randomRange(-50.0f, 50.0f) << "\n";
 }

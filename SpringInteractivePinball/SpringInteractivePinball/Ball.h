@@ -29,33 +29,29 @@ public:
 	void addForce(sf::Vector2f t_dir, float t_speed);
 
 	void redirect (sf::Vector2f t_dir);
-	void bounceCardinal(bool t_horizontal);
+	// void bounceCardinal(bool t_horizontal);
 
-	void move(sf::Time t_deltaTime);
+	void update(sf::Time t_deltaTime);
 
 	void setPosition(sf::Vector2f t_newPosition);
 
 	sf::Vector2f getVelocity();
+	void setVelocity(sf::Vector2f t_velocity);
 	sf::Vector2f getPositionCur();
 
 private:
-
 	sf::Sprite ballSprite;
 
 	const sf::Vector2f M_POS_START = sf::Vector2f(300.0f, 500.0f);
 
 	sf::Vector2f m_velocityCur = sf::Vector2f{ 0.0f,0.0f };
-	const float m_velocityMax = 1000.0f;
+	const float	m_velocityMax = 1000.0f;
 
 	sf::Vector2f m_positionCur = M_POS_START;
 
 	sf::Vector2f m_direction;
 
-	float m_force = 0.0f;
+	float		m_force = 0.0f;
 	const float M_GRAVITY = 0.05f;
 	const float M_FRICTION = 0.99f;
-
-	
-
-
 };

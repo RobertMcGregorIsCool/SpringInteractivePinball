@@ -31,6 +31,13 @@ PinballAud::PinballAud()
 
 	if (!m_musHardRock.openFromFile("ASSETS\\AUDIO\\MUSIC\\2.Hard Rock_loop.wav")) std::cout << "Fail load 2.Hard Rock_loop.wav\n";
 	if (!m_musDontStop.openFromFile("ASSETS\\AUDIO\\MUSIC\\Don't stop_looped.wav")) std::cout << "Fail load Don't stop_looped.wav\n";
+
+	m_musArcadeAmbience01.setLoop(true);
+	m_musArcadeAmbience01.setVolume(60);
+	m_musArcadeAmbience01.play();
+	m_musHardRock.setLoop(true);
+	m_musHardRock.setVolume(20);
+	m_musHardRock.play();
 }
 
 PinballAud::~PinballAud()

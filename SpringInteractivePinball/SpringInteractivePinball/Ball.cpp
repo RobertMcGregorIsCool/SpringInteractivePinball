@@ -7,7 +7,7 @@
 #include "Game.h"
 #include "Hlp.h"
 #include <SFML/Graphics.hpp>
-
+#include <iostream>
 
 Ball::Ball()
 {
@@ -16,7 +16,6 @@ Ball::Ball()
 	m_ballShape.setPosition(M_POS_START);
 	m_ballShape.setOrigin(M_RADIUS, M_RADIUS);
 }
-
 
 Ball::~Ball()
 {
@@ -34,20 +33,21 @@ void Ball::redirect(sf::Vector2f t_dir)
 	m_velocityCur = normalDir * Hlp::v2fGetMagnitude(m_velocityCur);
 }
 
-void Ball::bounceCardinal(bool horizontal)
-{
-	if (horizontal)
-	{
-		m_velocityCur.x *= -1;
-	}
-	else
-	{
-		m_velocityCur.y *= -1;
-	}
-}
+//void Ball::bounceCardinal(bool horizontal)
+//{
+//	if (horizontal)
+//	{
+//		std::cout << "Bouncing Horizontal!\n\n";
+//		m_velocityCur.x *= -1;
+//	}
+//	else
+//	{
+//		std::cout << "Bouncing Vertical!\n\n";
+//		m_velocityCur.y *= -1;
+//	}
+//}
 
-
-void Ball::move(sf::Time t_deltaTime)
+void Ball::update(sf::Time t_deltaTime)
 {// Continually called in Game::Update()?
 	m_positionNxt = m_positionCur + (m_velocityCur * t_deltaTime.asSeconds());// Multiply this by deltatime?
 }
@@ -63,6 +63,11 @@ void Ball::setPosition(sf::Vector2f newPosition)
 sf::Vector2f Ball::getVelocity()
 {
 	return m_velocityCur;
+}
+
+void Ball::setVelocity(sf::Vector2f t_velocity)
+{
+	m_velocityCur = t_velocity;
 }
 
 sf::Vector2f Ball::getPositionCur()

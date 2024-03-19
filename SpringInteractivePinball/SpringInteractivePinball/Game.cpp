@@ -28,11 +28,7 @@ Game::Game() :
 /// default destructor we didn't dynamically allocate anything
 /// so we don't need to free it, but mthod needs to be here
 /// </summary>
-Game::~Game()
-{
-}
-
-
+Game::~Game(){}
 /// <summary>
 /// main game loop
 /// update 60 times per second,
@@ -43,13 +39,6 @@ Game::~Game()
 void Game::run()
 {	
 	srand(time(nullptr));
-
-	m_pinballAudio.m_musArcadeAmbience01.setLoop(true);
-	m_pinballAudio.m_musArcadeAmbience01.setVolume(60);
-	m_pinballAudio.m_musArcadeAmbience01.play();
-	m_pinballAudio.m_musHardRock.setLoop(true);
-	m_pinballAudio.m_musHardRock.setVolume(20);
-	m_pinballAudio.m_musHardRock.play();
 
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
@@ -79,7 +68,8 @@ void Game::processEvents()
 	sf::Event newEvent;
 	while (m_window.pollEvent(newEvent))
 	{
-		mouseScreenPosition(newEvent);
+		m_mouseCur.x = newEvent.mouseMove.x;
+		m_mouseCur.y = newEvent.mouseMove.y;
 
 		if ( sf::Event::Closed == newEvent.type) // window message
 		{
@@ -112,7 +102,8 @@ void Game::processKeys(sf::Event t_event)
 	}
 	if (sf::Keyboard::K == t_event.key.code)
 	{
-		m_render.tableKick(0.1f);
+		m_collision.m_kickTest = true;
+		// m_render.tableKick(0.1f);
 	}
 }
 
@@ -142,7 +133,10 @@ void Game::processMouseUp(sf::Event t_event)
 	if (sf::Mouse::Left == t_event.mouseButton.button)
 	{
 		// m_bigPlaneVelocity = displacement / 100.0f;
-		m_balls[0].addForce(Hlp::v2fGetNormal(displacement), Hlp::v2fGetMagnitude(displacement));
+		for (int i = 0; i < m_ballsCurAmount; i++)
+		{
+			m_balls[i].addForce(Hlp::v2fGetNormal(displacement), Hlp::v2fGetMagnitude(displacement));
+		}
 		// m_bigHeading = headingD;
 		// m_bigPlaneSprite.setRotation(headingD);
 	}
@@ -159,23 +153,31 @@ void Game::update(sf::Time t_deltaTime)
 		m_window.close();
 	}
 
-	m_balls[0].move(t_deltaTime);
-	m_balls[0].setPosition(testPos(m_balls[0].m_positionNxt));
-
 	updateScoreBoard();
-
+	
 	for (int i = 0; i < m_ballsCurAmount; i++)
 	{
-		m_col.collision(m_balls[i], m_mouseCur);
+		m_balls[i].update(t_deltaTime);
+		m_collision.detect(m_balls[i]);
+		if (m_collision.m_kickTest)
+		{
+			std::cout << "Trying to kick ball# " << i << "!\n\n";
+			m_balls[i].setVelocity(sf::Vector2f(m_balls[i].getVelocity().x * -1, m_balls[i].getVelocity().y * -1));
+			m_collision.m_kickTest = false;
+		}
+		m_balls[i].setPosition(m_balls[i].m_positionNxt);
 	}
+	/*if (m_col.m_kickTest)
+	{
+		std::cout << "Trying to kick...!\n\n";
+		m_balls[0].bounceCardinal(false);
+		m_col.m_kickTest = false;
+	}*/
+
+	m_collision.visualDebugLines(m_mouseCur);
 
 	m_render.screenSettle(t_deltaTime);
 }
-
-//void Game::collision()
-//{
-//	
-//}
 
 /// <summary>
 /// draw the frame and then switch buffers
@@ -189,9 +191,7 @@ void Game::setup()
 {
 	setupFontAndText(); // load font 
 	setupScoreBoard();
-	setupTable();
 	setupSprite(); // load texture
-	m_col.setupCollision();
 }
 
 /// <summary>
@@ -216,45 +216,10 @@ void Game::setupScoreBoard()
 	m_scoreBoard.setPosition((Globals::WIDTH * 0.5f) - (m_scoreBoard.getLocalBounds().width * 0.5f), m_scoreBoard.getLocalBounds().height);
 }
 
-//void Game::setupTable()
-//{
-//	/*m_backgroundImage.setOutlineColor(sf::Color::Magenta);
-//	m_backgroundImage.setFillColor(sf::Color::White);
-//	m_backgroundImage.setOutlineThickness(m_backgroundImageThickness);
-//	m_backgroundImage.setSize(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
-//	m_backgroundImage.setOrigin(sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f));
-//	m_backgroundImage.setPosition(sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f));
-//
-//	m_floorImage.setFillColor(sf::Color::Black);
-//	m_floorImage.setSize(sf::Vector2f(Globals::WIDTH * 2.0f, Globals::HEIGHT * 2.0f));
-//	m_floorImage.setOrigin(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
-//	m_floorImage.setPosition(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
-//
-//	m_view.setCenter(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f);
-//	m_viewCenterAtStart = m_view.getCenter();
-//	m_view.reset(sf::FloatRect(0.0f, 0.0f, Globals::WIDTH, Globals::HEIGHT));*/
-//
-//	m_window.setView(m_render.m_view);
-//}
-
-//void Game::setupCollision()
-//{
-//	
-//}
-
 /// <summary>
 /// load the texture and setup the sprite for the logo
 /// </summary>
-void Game::setupSprite()
-{
-
-}
-
-void Game::mouseScreenPosition(sf::Event t_event)
-{
-	m_mouseCur.x = t_event.mouseMove.x;
-	m_mouseCur.y = t_event.mouseMove.y;	
-}
+void Game::setupSprite() {}
 
 void Game::updateScoreBoard()
 {
@@ -263,38 +228,9 @@ void Game::updateScoreBoard()
 		m_scoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
 			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
 			"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
-			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)));// +
+			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)) + //);// +
 			//"\nMouseVec: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
+			"\nBall veloc: " + std::to_string(m_balls[0].getVelocity().x) + " | " + std::to_string(m_balls[0].getVelocity().y));
 	}
 }
 
-sf::Vector2f Game::testPos(sf::Vector2f t_pos)
-{
-	float wide = static_cast<float>(Globals::WIDTH);
-	float high = static_cast<float>(Globals::HEIGHT);
-	
-	if (t_pos.x - m_balls[0].M_RADIUS <= 0.0f)
-	{
-		m_balls[0].bounceCardinal(true);
-		m_render.tableKick(0.1f);
-	}
-
-	if (t_pos.x + m_balls[0].M_RADIUS >= wide)
-	{
-		m_balls[0].bounceCardinal(true);
-		m_render.tableKick(0.1f);
-	}
-		
-	if (t_pos.y - m_balls[0].M_RADIUS <= 0.0f)
-	{
-		m_balls[0].bounceCardinal(false);
-		m_render.tableKick(0.1f);
-	}
-		
-	if (t_pos.y + m_balls[0].M_RADIUS >= high)
-	{
-		m_balls[0].bounceCardinal(false);
-		m_render.tableKick(0.1f);
-	}
-	return t_pos;
-}

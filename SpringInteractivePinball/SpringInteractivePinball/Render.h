@@ -3,18 +3,19 @@
 #include <SFML/Graphics.hpp>
 
 #include "PinballAud.h"
-//#include "Collision.h"
+#include "Collision.h"
 
 class Render
 {
 public:
 
-	Render(sf::RenderWindow& t_window);
+	Render(sf::RenderWindow& t_window, Collision& t_col);
 	~Render();
 
 	void render(Ball t_balls[4], sf::Text t_scoreBoard);
 
 	sf::RenderWindow& m_window; // main SFML window
+	Collision& m_collision;
 	sf::View m_view; // View onto table
 	sf::Vector2f m_viewCenterAtStart;
 
@@ -27,8 +28,8 @@ public:
 
 private:
 	
-	Collision m_col;
-	PinballAud m_pinballAudio;
+	
+	// PinballAud m_pinballAudio;
 
 	float m_viewReturnSpeed = 32.0f;
 };

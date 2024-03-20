@@ -14,8 +14,6 @@ Collision::~Collision(){}
 
 void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 {
-	
-
 	float wide = static_cast<float>(Globals::WIDTH);
 	float high = static_cast<float>(Globals::HEIGHT);
 
@@ -24,6 +22,20 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 	sf::Vector2f leadingPointOfBall = (normalisedDir * t_ball.M_RADIUS);
 	
 	leadingPointOfBall = leadingPointOfBall + t_ball.getPositionCur();
+
+	if (m_table.m_launchBoxRect.contains(t_ball.getPositionCur()))
+	{
+		t_ball.addForce(sf::Vector2f(0, -1.0f), 4096.0f * 16.0f);
+	}
+
+	if (m_table.m_launchWallRect.contains(leadingPointOfBall))
+	{
+		boundsCheck(false, t_ball, leadingPointOfBall,
+			m_table.m_launchWallRect.top,
+			m_table.m_launchWallRect.top + m_table.m_launchWallRect.height,
+			m_table.m_launchWallRect.left,
+			m_table.m_launchWallRect.left + m_table.m_launchWallRect.width);
+	}
 
 	boundsCheck(true, t_ball, leadingPointOfBall, 0.0f, high, 0.0f, wide);
 
@@ -42,15 +54,15 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 	}
 	else
 	{
-		m_table.m_testBox.setFillColor(sf::Color::Yellow);
+		m_table.m_testBox.setFillColor(sf::Color(99, 79, 23, 255));
 	}
 
 	bumperCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_bumper01);
 
-	// flipperCheck(t_ball, m_flipperTest, 300.0f, 240.0f);
-	flipperCheck(t_ball, m_table.m_flipperTest, 120.0f, 60.0f);
+	inverseRadCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_roundedTopBot);
 
-	// visualDebugLines(t_mouseCur);
+	flipperCheck(t_ball, m_table.m_flipperTest, 300.0f, 240.0f);
+	// flipperCheck(t_ball, m_table.m_flipperTest, 120.0f, 60.0f);
 }
 
 void Collision::boundsCheck(bool interior, Ball& t_ball, sf::Vector2f t_point, float top, float bottom, float left, float right)
@@ -60,13 +72,11 @@ void Collision::boundsCheck(bool interior, Ball& t_ball, sf::Vector2f t_point, f
 		if (t_point.x <= left || t_point.x >= right) // (leadingPointOfBall.x <= 0.0f || leadingPointOfBall.x >= wide)
 		{
 			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x * -1, t_ball.getVelocity().y));
-			m_render.tableKick(0.001f);
 		}
 		
 		if (t_point.y <= top || t_point.y >= bottom) // (leadingPointOfBall.y <= 0.0f || leadingPointOfBall.y >= high)
 		{
 			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x, t_ball.getVelocity().y * -1));
-			m_render.tableKick(0.001f);
 		}
 	} 
 	else
@@ -109,6 +119,20 @@ void Collision::bumperCheck(Ball& t_ball, sf::Vector2f leadingPoint, sf::Vector2
 	else
 	{
 		t_bumper.setFillColor(sf::Color::Cyan);
+	}
+}
+
+void Collision::inverseRadCheck(Ball& t_ball, sf::Vector2f t_leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_outerRing)
+{
+	float outerColDist = Hlp::v2fGetMagnitude(t_leadingPoint - t_outerRing.getPosition());
+
+	if (outerColDist > t_outerRing.getRadius() - t_ball.M_RADIUS + M_BUMPER_COLLISION_ADJUSTMENT)
+	{
+		sf::Vector2f outerRingNormal = Hlp::v2fGetNormal(t_ball.getPositionCur() - t_outerRing.getPosition());
+
+		sf::Vector2f reflectionVec = Hlp::v2fReflect(t_normalisedDir, outerRingNormal);
+
+		t_ball.redirect(reflectionVec);
 	}
 }
 

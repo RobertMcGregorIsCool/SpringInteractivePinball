@@ -119,7 +119,7 @@ void Game::processMouseUp(sf::Event t_event)
 		
 	sf::Vector2f displacement; // Remember to ask about the word 'displacement'.
 
-	displacement = (m_mouseDown - m_mouseUp) * m_nudgeScalar;
+	displacement = (m_mouseDown - m_mouseUp) * M_NUDGE_SCALAR;
 	
 	// std::cout << displacement.x << "-" << displacement.y << "\n";
 

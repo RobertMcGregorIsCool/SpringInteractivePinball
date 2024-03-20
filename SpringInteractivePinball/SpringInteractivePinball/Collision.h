@@ -23,7 +23,8 @@ public:
 	void detect(Ball& t_ball, sf::Vector2i t_mouseCur);
 	void boundsCheck(bool interior, Ball& t_ball, sf::Vector2f t_point, float top, float bottom, float left, float right);
 	void bumperCheck(Ball& t_ball, sf::Vector2f t_leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_bumper);
-	void flipperCheck(Ball t_ball, sf::CircleShape& t_flipper, float t_max, float t_min);
+	void inverseRadCheck(Ball& t_ball, sf::Vector2f t_leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_outerRing);
+	void flipperCheck(Ball t_ball, sf::CircleShape& t_flipper, float t_max, float t_min); // IMPORTANT! This is probably going to need the ball passed by reference!
 	
 
 	Table& m_table;

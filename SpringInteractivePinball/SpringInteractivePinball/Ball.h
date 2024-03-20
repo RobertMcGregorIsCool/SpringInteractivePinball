@@ -5,6 +5,11 @@
 
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
+//#include "Game.h"
+#include "Hlp.h"
+#include "Globals.h"
+
 
 class Ball
 {
@@ -29,7 +34,6 @@ public:
 	void addForce(sf::Vector2f t_dir, float t_speed);
 
 	void redirect (sf::Vector2f t_dir);
-	// void bounceCardinal(bool t_horizontal);
 
 	void update(sf::Time t_deltaTime);
 
@@ -42,7 +46,7 @@ public:
 private:
 	sf::Sprite ballSprite;
 
-	const sf::Vector2f M_POS_START = sf::Vector2f(300.0f, 500.0f);
+	const sf::Vector2f M_POS_START = sf::Vector2f(Globals::WIDTH * 0.9f, Globals::HEIGHT * 0.9f);
 
 	sf::Vector2f m_velocityCur = sf::Vector2f{ 0.0f,0.0f };
 	const float	m_velocityMax = 1000.0f;

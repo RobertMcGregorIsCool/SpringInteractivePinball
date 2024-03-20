@@ -4,10 +4,6 @@
 /// </summary>
 
 #include "Ball.h"
-#include "Game.h"
-#include "Hlp.h"
-#include <SFML/Graphics.hpp>
-#include <iostream>
 
 Ball::Ball()
 {
@@ -35,12 +31,33 @@ void Ball::redirect(sf::Vector2f t_dir)
 
 void Ball::update(sf::Time t_deltaTime)
 {// Continually called in Game::Update()?
+	addForce(sf::Vector2f(0.0f, 1.0f), M_GRAVITY * 256.0f);
+
+	m_velocityCur *= M_FRICTION;
+
 	m_positionNxt = m_positionCur + (m_velocityCur * t_deltaTime.asSeconds());// Multiply this by deltatime?
 }
 
 void Ball::setPosition(sf::Vector2f newPosition) 
 {
 	m_positionCur = newPosition;
+
+	if (m_positionCur.x < 0.0f)
+	{
+		m_positionCur.x = 0.0f;
+	}
+	if (m_positionCur.x > Globals::WIDTH)
+	{
+		m_positionCur.x = Globals::WIDTH;
+	}
+	if (m_positionCur.y < 0.0f)
+	{
+		m_positionCur.y = 0.0f;
+	}
+	if (m_positionCur.y > Globals::HEIGHT)
+	{
+		m_positionCur.y = Globals::HEIGHT;
+	}
 
 	m_ballShape.setPosition(newPosition);
 	// Sprite.setPosition(newPosition) will go here soon.

@@ -47,7 +47,7 @@ private:
 
 	void updateScoreBoard();
 
-	const float m_nudgeScalar = 0.5f;
+	const float M_NUDGE_SCALAR = 4.0f;
 
 	Table	m_table;
 	PinballAud m_pinballAudio;

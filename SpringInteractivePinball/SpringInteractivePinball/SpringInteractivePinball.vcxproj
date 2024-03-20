@@ -27,6 +27,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PinballAud.cpp" />
     <ClCompile Include="Render.cpp" />
+    <ClCompile Include="Table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
@@ -36,6 +37,7 @@
     <ClInclude Include="Hlp.h" />
     <ClInclude Include="PinballAud.h" />
     <ClInclude Include="Render.h" />
+    <ClInclude Include="Table.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="ASSETS\IMAGES\SFML-LOGO.png">

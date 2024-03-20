@@ -5,12 +5,10 @@
 #include <iostream>
 
 #include "Render.h"
-// #include "Collision.h"
 #include "Globals.h"
 #include "Hlp.h"
-//#include "PinballAud.h"
 
-Render::Render(sf::RenderWindow& t_window, Collision& t_col) : m_window(t_window), m_collision(t_col)
+Render::Render(sf::RenderWindow& t_window, Table& t_table, PinballAud& t_pinballAud) : m_window(t_window), m_table(t_table), m_pinballAud{ t_pinballAud } //, Collision& t_col) : m_window(t_window), m_collision(t_col)
 {
 	m_backgroundImage.setOutlineColor(sf::Color::Magenta);
 	m_backgroundImage.setFillColor(sf::Color::White);
@@ -29,6 +27,14 @@ Render::Render(sf::RenderWindow& t_window, Collision& t_col) : m_window(t_window
 	m_view.reset(sf::FloatRect(0.0f, 0.0f, Globals::WIDTH, Globals::HEIGHT));
 
 	m_window.setView(m_view);
+
+	sf::Vertex point;
+	point.color = sf::Color::Blue;
+	m_flipperLine.clear();
+	point.position = m_table.m_flipperTest.getPosition();
+	m_flipperLine.append(point);
+	point.position = m_table.m_flipperTest.getPosition() + (m_flipperDir * m_table.m_flipperTest.getRadius());
+	m_flipperLine.append(point);
 }
 
 Render::~Render(){}
@@ -38,23 +44,27 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.clear(sf::Color::Black);
 	m_window.draw(m_backgroundImage);
 	m_window.draw(m_floorImage);
-	m_window.draw(m_collision.m_roundedTopBot);
-
 	
+	m_window.draw(m_table.m_roundedTopBot);
 	
-	m_window.draw(m_collision.m_flipperTest);
-	m_window.draw(m_collision.m_flipperLine);
-	m_window.draw(m_collision.m_mouseLine);
-	m_window.draw(m_collision.m_mouseLineReflect);
+	m_window.draw(m_table.m_flipperTest);
+	m_window.draw(m_flipperLine);
+	m_window.draw(m_mouseLine);
+	m_window.draw(m_mouseLineReflect);
 
 	m_window.draw(t_balls[0].m_ballShape);
 
-	m_window.draw(m_collision.m_testBox);
-	m_window.draw(m_collision.m_bumper01);
-
+	m_window.draw(m_table.m_testBox);
+	m_window.draw(m_table.m_bumper01);
 	m_window.draw(t_scoreBoard);
 
 	m_window.display();
+
+	if (m_kickTest)
+	{
+		tableKick();
+		m_kickTest = false;
+	}
 }
 
 void Render::tableKick(float scalar)
@@ -67,9 +77,9 @@ void Render::tableKick(float scalar)
 	m_view.zoom(zoomRandom);
 	m_window.setView(m_view);
 
-	// m_pinballAudio.m_sndRattle.play();
+	m_pinballAud.m_sndRattle.play();
 
-	std::cout << "Random number is " << Hlp::randomRange(-50.0f, 50.0f) << "\n";
+	// std::cout << "Random number is " << Hlp::randomRange(-50.0f, 50.0f) << "\n";
 }
 
 bool Render::screenSettle(sf::Time t_deltaTime)
@@ -87,4 +97,27 @@ bool Render::screenSettle(sf::Time t_deltaTime)
 		m_window.setView(m_view);
 		return false;
 	}
+}
+
+void Render::visualDebugLines(sf::Vector2i t_mouseCur)
+{
+	sf::Vector2f m_mouseCurFloat = sf::Vector2f(static_cast<float>(t_mouseCur.x), static_cast<float>(t_mouseCur.y));
+
+	sf::Vertex point;
+	point.color = sf::Color::Red;
+	m_mouseLine.clear();
+	point.position = m_table.m_flipperTest.getPosition();
+	m_mouseLine.append(point);
+	point.position = m_mouseCurFloat;
+	m_mouseLine.append(point);
+
+	point.color = sf::Color::Yellow;
+	m_mouseLineReflect.clear();
+	point.position = m_mouseCurFloat;
+	m_mouseLineReflect.append(point);
+	sf::Vector2f lineBounce = m_table.m_flipperTest.getPosition() - m_mouseCurFloat;
+	lineBounce = Hlp::v2fPerpendicularClockwise(lineBounce);
+
+	point.position = m_mouseCurFloat + lineBounce;
+	m_mouseLineReflect.append(point);
 }

@@ -102,8 +102,7 @@ void Game::processKeys(sf::Event t_event)
 	}
 	if (sf::Keyboard::K == t_event.key.code)
 	{
-		m_collision.m_kickTest = true;
-		// m_render.tableKick(0.1f);
+		m_render.m_kickTest = true;
 	}
 }
 
@@ -160,24 +159,17 @@ void Game::update(sf::Time t_deltaTime)
 		m_balls[i].update(t_deltaTime);
 		m_collision.detect(m_balls[i], m_mouseCur);
 		
-		if (m_collision.m_kickTest)
+		if (m_render.m_kickTest)
 		{
 			std::cout << "Trying to kick ball# " << i << "!\n\n";
 			m_balls[i].setVelocity(sf::Vector2f(m_balls[i].getVelocity().x * -1, m_balls[i].getVelocity().y * -1));
-			m_collision.m_kickTest = false;
+			m_render.m_kickTest = false;
 		}
 		
 		m_balls[i].setPosition(m_balls[i].m_positionNxt);
-		
 	}
-	/*if (m_col.m_kickTest)
-	{
-		std::cout << "Trying to kick...!\n\n";
-		m_balls[0].bounceCardinal(false);
-		m_col.m_kickTest = false;
-	}*/
 
-	m_collision.visualDebugLines(m_mouseCur);
+	m_render.visualDebugLines(m_mouseCur);
 
 	m_render.screenSettle(t_deltaTime);
 }

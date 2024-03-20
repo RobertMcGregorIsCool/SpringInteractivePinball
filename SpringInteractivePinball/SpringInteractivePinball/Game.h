@@ -12,6 +12,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include "Ball.h"
+#include "Table.h"
 #include "Collision.h"
 #include "Render.h"
 #include "PinballAud.h"
@@ -48,10 +49,11 @@ private:
 
 	const float m_nudgeScalar = 0.5f;
 
-	Collision m_collision;
-
+	Table	m_table;
+	PinballAud m_pinballAudio;
 	sf::RenderWindow m_window; // main SFML window
-	Render m_render{ m_window, m_collision };
+	Render m_render{ m_window, m_table, m_pinballAudio };
+	Collision m_collision{ m_table, m_render};
 
 	// sf::Font m_ArialBlackfont; // font used by message
 	sf::Font m_karnivorDigitFont; // font used by message
@@ -70,7 +72,7 @@ private:
 
 	//float m_flipperTestPos = 0.0f;
 	
-	PinballAud m_pinballAudio;
+	
 
 	bool m_exitGame; // control exiting game
 

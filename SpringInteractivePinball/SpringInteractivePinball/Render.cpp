@@ -1,3 +1,7 @@
+/// <summary>
+/// author Robert McGregor login: c00302210
+/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// </summary>
 #include <iostream>
 
 #include "Render.h"
@@ -36,14 +40,17 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.draw(m_floorImage);
 	m_window.draw(m_collision.m_roundedTopBot);
 
-	m_window.draw(m_collision.m_testBox);
-	m_window.draw(m_collision.m_bumper01);
+	
+	
 	m_window.draw(m_collision.m_flipperTest);
 	m_window.draw(m_collision.m_flipperLine);
 	m_window.draw(m_collision.m_mouseLine);
 	m_window.draw(m_collision.m_mouseLineReflect);
 
 	m_window.draw(t_balls[0].m_ballShape);
+
+	m_window.draw(m_collision.m_testBox);
+	m_window.draw(m_collision.m_bumper01);
 
 	m_window.draw(t_scoreBoard);
 

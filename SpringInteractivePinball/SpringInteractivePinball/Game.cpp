@@ -122,7 +122,7 @@ void Game::processMouseUp(sf::Event t_event)
 
 	displacement = (m_mouseDown - m_mouseUp) * m_nudgeScalar;
 	
-	std::cout << displacement.x << "-" << displacement.y << "\n";
+	// std::cout << displacement.x << "-" << displacement.y << "\n";
 
 	/*float headingD;
 	float headingR;	
@@ -158,17 +158,17 @@ void Game::update(sf::Time t_deltaTime)
 	for (int i = 0; i < m_ballsCurAmount; i++)
 	{
 		m_balls[i].update(t_deltaTime);
-		m_collision.detect(m_balls[i]);
-		std::cout << "m_velocityCur is : " << m_balls[i].getVelocity().x << " | " << m_balls[i].getVelocity().y << ".\n\n";
+		m_collision.detect(m_balls[i], m_mouseCur);
+		
 		if (m_collision.m_kickTest)
 		{
 			std::cout << "Trying to kick ball# " << i << "!\n\n";
 			m_balls[i].setVelocity(sf::Vector2f(m_balls[i].getVelocity().x * -1, m_balls[i].getVelocity().y * -1));
 			m_collision.m_kickTest = false;
 		}
-		std::cout << "m_velocityCur is : " << m_balls[i].getVelocity().x << " | " << m_balls[i].getVelocity().y << ".\n\n";
+		
 		m_balls[i].setPosition(m_balls[i].m_positionNxt);
-		std::cout << "m_velocityCur is : " << m_balls[i].getVelocity().x << " | " << m_balls[i].getVelocity().y << ".\n\n";
+		
 	}
 	/*if (m_col.m_kickTest)
 	{

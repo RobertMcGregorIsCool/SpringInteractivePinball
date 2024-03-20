@@ -1,3 +1,7 @@
+/// <summary>
+/// author Robert McGregor login: c00302210
+/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// </summary>
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -12,11 +16,10 @@ public:
 	Collision();
 	~Collision();
 
-	// sf::Vector2f testPos(Ball t_ball);
-	void detect(Ball t_ball);
-	void boundsCheck(sf::Vector2f t_point, float top, float bottom, float left, float right);
-	void bumperCheck(Ball t_ball, sf::Vector2f t_normalisedDir);
-	void flipperCheck(Ball t_ball);
+	void detect(Ball& t_ball, sf::Vector2i t_mouseCur);
+	void boundsCheck(bool interior, Ball& t_ball, sf::Vector2f t_point, float top, float bottom, float left, float right);
+	void bumperCheck(Ball& t_ball, sf::Vector2f t_leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_bumper);
+	void flipperCheck(Ball t_ball, sf::CircleShape& t_flipper, float t_max, float t_min);
 	void visualDebugLines(sf:: Vector2i t_mouseCur);
 
 	sf::RectangleShape m_testBox;
@@ -28,11 +31,10 @@ public:
 	sf::CircleShape m_flipperTest;
 	sf::VertexArray m_flipperLine{sf::Lines}; // Line to show flipper angle
 
-	//sf::Vector2f m_testVec01;
-	sf::Vector2f m_testVec02;
-
 	sf::VertexArray m_mouseLine {sf::Lines};
 	sf::VertexArray m_mouseLineReflect {sf::Lines};
+
+	const float M_BUMPER_COLLISION_ADJUSTMENT = 16.0f;
 
 	bool m_kickTest = false;
 

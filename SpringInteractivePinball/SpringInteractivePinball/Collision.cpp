@@ -1,3 +1,7 @@
+/// <summary>
+/// author Robert McGregor login: c00302210
+/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// </summary>
 #include "Collision.h"
 #include "Globals.h"
 #include "Hlp.h"
@@ -47,7 +51,7 @@ Collision::Collision()
 
 Collision::~Collision(){}
 
-void Collision::detect(Ball t_ball)
+void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 {
 	/*if (m_kickTest)
 	{
@@ -65,130 +69,112 @@ void Collision::detect(Ball t_ball)
 	
 	leadingPointOfBall = leadingPointOfBall + t_ball.getPositionCur();
 
-	//if (t_ball.m_positionNxt.x - t_ball.M_RADIUS <= 0.0f)
-	if (leadingPointOfBall.x <= 0.0f || leadingPointOfBall.x >= wide)
+	boundsCheck(true, t_ball, leadingPointOfBall, 0.0f, high, 0.0f, wide);
+
+	if (m_testBoxRect.contains(leadingPointOfBall))
 	{
-		//std::cout << "Ball velocity before change is " << t_ball.getVelocity().x << ".\n\n";
-		t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x * -1, t_ball.getVelocity().y));
-		//std::cout << "Ball velocity after change is " << t_ball.getVelocity().x << ".\n\n";
-		//std::cout << "Bouncing Horizontal!\n\n";
-		// t_ball.bounceCardinal(true);//m_render.tableKick(0.1f);
-	}
+		m_testBox.setFillColor(sf::Color::Green);
 
-	////if (t_ball.m_positionNxt.x + t_ball.M_RADIUS >= wide)
-	//if (leadingPointOfBall.x >= wide)
-	//{
-	//	t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x * -1, t_ball.getVelocity().y));
-	//	std::cout << "Bouncing Horizontal!\n\n";
-	//	//t_ball.bounceCardinal(true);//m_render.tableKick(0.1f);
-	//}
-
-	//if (t_ball.m_positionNxt.y - t_ball.M_RADIUS <= 0.0f)
-	if (leadingPointOfBall.y <= 0.0f || leadingPointOfBall.y >= high)
-	{
-		t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x, t_ball.getVelocity().y * -1));
-		std::cout << "Bouncing Vertical!\n\n";
-		//t_ball.bounceCardinal(false);//m_render.tableKick(0.1f);
-	}
-
-	std::cout << "m_velocityCur is : " << t_ball.getVelocity().x << " | " << t_ball.getVelocity().y << ".\n\n";
-
-	//if (t_ball.m_positionNxt.y + t_ball.M_RADIUS >= high)
-	//if (leadingPointOfBall.y >= high)
-	//{
-	//	t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x, t_ball.getVelocity().y * -1));
-	//	std::cout << "Bouncing Vertical!\n\n";
-	//	//t_ball.bounceCardinal(false);//m_render.tableKick(0.1f);
-	//}
-	
-
-	//if (m_testBoxRect.contains(leadingPointOfBall))
-	//{
-	//	m_testBox.setFillColor(sf::Color::Green);
-
-	//	if (t_ball.getPositionCur().x < m_testBox.getGlobalBounds().left)
-	//	{	
-	//		t_ball.bounceCardinal(true);
-	//	}
-	//	else if (t_ball.getPositionCur().x > m_testBox.getGlobalBounds().left + m_testBox.getGlobalBounds().width)
-	//	{
-	//		t_ball.bounceCardinal(true);
-	//	}
-	//	else if (t_ball.getPositionCur().y < m_testBox.getGlobalBounds().top)
-	//	{
-	//		// std::cout << "Heyyoo!\n\n";
-	//		t_ball.bounceCardinal(false);
-	//	}
-	//	else
-	//	{
-	//		t_ball.bounceCardinal(false);
-	//	}
-	//	// tableKick(2.f);
-	//	//sf::Vector2i newWindowPos = m_window.getPosition() + sf::Vector2i(0, 30);
-	//	//m_window.setPosition(newWindowPos);
-	//}
-	//else
-	//{
-	//	m_testBox.setFillColor(sf::Color::Yellow);
-	//}
-
-	//// boundsCheck();
-	//bumperCheck(t_ball, normalisedDir);
-	//flipperCheck(t_ball);
-
-	// t_ball.m_positionNxt = testPos(t_ball);
-
-	//return t_ball.m_positionNxt;
-}
-
-void Collision::boundsCheck(sf::Vector2f t_point, float top, float bottom, float left, float right)
-{
-}
-
-void Collision::bumperCheck(Ball t_ball, sf::Vector2f t_normalisedDir)
-{
-	float bumperColDist = Hlp::v2fGetMagnitude(t_ball.getPositionCur() - m_bumper01.getPosition());
-
-	if (bumperColDist < m_bumper01.getRadius() + t_ball.M_RADIUS)
-	{
-		m_bumper01.setFillColor(sf::Color::Blue);
-
-		sf::Vector2f bumperNormal = Hlp::v2fGetNormal(m_bumper01.getPosition() - t_ball.getPositionCur());
-
-		sf::Vector2f reflectionVec = Hlp::v2fReflect(t_normalisedDir, bumperNormal);
-		std::cout << "Redirect called.\n\n";
-		t_ball.redirect(reflectionVec);
-
-		// tableKick(3.0f);
+		boundsCheck(false, t_ball, leadingPointOfBall,
+			m_testBox.getGlobalBounds().top,
+			m_testBox.getGlobalBounds().top + m_testBox.getGlobalBounds().height,
+			m_testBox.getGlobalBounds().left,
+			m_testBox.getGlobalBounds().left + m_testBox.getGlobalBounds().width);
+			//tableKick(2.f);
+			//sf::Vector2i newWindowPos = m_window.getPosition() + sf::Vector2i(0, 30);
+			//m_window.setPosition(newWindowPos);
 	}
 	else
 	{
-		m_bumper01.setFillColor(sf::Color::Cyan);
+		m_testBox.setFillColor(sf::Color::Yellow);
+	}
+
+	bumperCheck(t_ball, leadingPointOfBall, normalisedDir, m_bumper01);
+
+	// flipperCheck(t_ball, m_flipperTest, 300.0f, 240.0f);
+	flipperCheck(t_ball, m_flipperTest, 120.0f, 60.0f);
+
+	visualDebugLines(t_mouseCur);
+}
+
+void Collision::boundsCheck(bool interior, Ball& t_ball, sf::Vector2f t_point, float top, float bottom, float left, float right)
+{
+	if (interior)
+	{
+		if (t_point.x <= left || t_point.x >= right) // (leadingPointOfBall.x <= 0.0f || leadingPointOfBall.x >= wide)
+		{
+			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x * -1, t_ball.getVelocity().y));
+		}
+		
+		if (t_point.y <= top || t_point.y >= bottom) // (leadingPointOfBall.y <= 0.0f || leadingPointOfBall.y >= high)
+		{
+			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x, t_ball.getVelocity().y * -1));
+		}
+	} 
+	else
+	{
+		if (t_ball.getPositionCur().x < left)
+		{
+			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x * -1, t_ball.getVelocity().y));
+		}
+		else if (t_ball.getPositionCur().x > right) // (leadingPointOfBall.x <= 0.0f || leadingPointOfBall.x >= wide))
+		{
+			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x * -1, t_ball.getVelocity().y));
+		}
+		else if (t_ball.getPositionCur().y < top)
+		{
+			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x, t_ball.getVelocity().y * -1));
+		}
+		else if (t_ball.getPositionCur().y > bottom)// (leadingPointOfBall.y <= 0.0f || leadingPointOfBall.y >= high)
+		{
+			t_ball.setVelocity(sf::Vector2f(t_ball.getVelocity().x, t_ball.getVelocity().y * -1));
+		}
 	}
 }
 
-void Collision::flipperCheck(Ball t_ball)
+void Collision::bumperCheck(Ball& t_ball, sf::Vector2f leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_bumper)
 {
-	if (Hlp::v2fGetMagnitude(m_flipperTest.getPosition() - t_ball.getPositionCur()) < m_flipperTest.getRadius())
+	float bumperColDist = Hlp::v2fGetMagnitude(leadingPoint - t_bumper.getPosition());
+
+	if (bumperColDist < t_bumper.getRadius() + t_ball.M_RADIUS - M_BUMPER_COLLISION_ADJUSTMENT)
 	{
-		m_testVec02 = Hlp::v2fGetNormal(t_ball.getPositionCur() - m_flipperTest.getPosition());
+		t_bumper.setFillColor(sf::Color::Blue);
+
+		sf::Vector2f bumperNormal = Hlp::v2fGetNormal(t_bumper.getPosition() - t_ball.getPositionCur());
+
+		sf::Vector2f reflectionVec = Hlp::v2fReflect(t_normalisedDir, bumperNormal);
+
+		t_ball.redirect(reflectionVec);
+
+		//tableKick(3.0f);
+	}
+	else
+	{
+		t_bumper.setFillColor(sf::Color::Cyan);
+	}
+}
+
+void Collision::flipperCheck(Ball t_ball, sf::CircleShape& t_flipper, float t_max, float t_min)
+{
+	if (Hlp::v2fGetMagnitude(t_flipper.getPosition() - t_ball.getPositionCur()) < t_flipper.getRadius())
+	{
+		sf::Vector2f flipperToBallNormal = Hlp::v2fGetNormal(t_ball.getPositionCur() - t_flipper.getPosition());
 
 		sf::Vector2f straightUp{ 0.0f, 1.0f };
-		float flipperAngleR = atan2(Hlp::v2fCrossProduct(straightUp, m_testVec02), Hlp::v2fDotProduct(straightUp, m_testVec02));
+		float flipperAngleR = atan2(Hlp::v2fCrossProduct(straightUp, flipperToBallNormal), Hlp::v2fDotProduct(straightUp, flipperToBallNormal));
 		float flipperAngleD = flipperAngleR * 180.0f / static_cast<float>(M_PI);
 		flipperAngleD += 180.0f;
-		// std::cout << "The angle is " << flipperAngleD << ".\n\n";
 
-		m_flipperTest.setFillColor(sf::Color::Cyan);
+		t_flipper.setFillColor(sf::Color::Cyan);
 
-		if (flipperAngleD < 300.0f && flipperAngleD > 240.0f)
+		if (flipperAngleD < t_max && flipperAngleD > t_min)
 		{
-			m_flipperTest.setFillColor(sf::Color::Green);
+			t_flipper.setFillColor(sf::Color::Green);
 		}
 	}
 	else
 	{
-		m_flipperTest.setFillColor(sf::Color(220, 220, 220, 255));
+		t_flipper.setFillColor(sf::Color(220, 220, 220, 255));
 	}
 }
 

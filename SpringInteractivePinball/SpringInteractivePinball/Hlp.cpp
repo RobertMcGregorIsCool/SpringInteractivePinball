@@ -1,3 +1,7 @@
+/// <summary>
+/// author Robert McGregor login: c00302210
+/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// </summary>
 #include "Hlp.h"
 
 sf::Vector2f Hlp::v2fGetNormal(sf::Vector2f velocity)

@@ -44,9 +44,6 @@ private:
 	void processMouseDown(sf::Event t_event);
 	void processMouseUp(sf::Event t_event);
 
-	//void tableKick(float scalar = 1.0f);
-	//bool screenSettle(sf::Time t_deltaTime);
-
 	void updateScoreBoard();
 
 	const float m_nudgeScalar = 0.5f;

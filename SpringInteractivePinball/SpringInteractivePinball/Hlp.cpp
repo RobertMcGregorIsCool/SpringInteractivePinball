@@ -85,10 +85,10 @@ int Hlp::randomRange(int from, int to)
 
 float Hlp::randomRange(float from, float to)
 {
-	from *= 100.0f;
-	to *= 100.0f;
+	from *= 1000.0f;
+	to *= 1000.0f;
 
 	float output = static_cast<float>(randomRange(static_cast<int>(from), static_cast<int>(to)));
 
-	return output * 0.01f;
+	return output * 0.0001f;
 }

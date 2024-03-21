@@ -25,7 +25,7 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 
 	if (m_table.m_launchBoxRect.contains(t_ball.getPositionCur()))
 	{
-		t_ball.addForce(sf::Vector2f(-0.00001f, -1.0f), 4096.0f * 16.0f);
+		t_ball.addForce(sf::Vector2f(0, -1.0f), (4096.0f * 16.0f) * m_launchBoxScalarFromCommand);
 	}
 
 	if (m_table.m_launchWallRect.contains(leadingPointOfBall))
@@ -67,11 +67,12 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 	if (m_table.m_gutterTeleportRect.contains(t_ball.getPositionCur()))
 	{
 		t_ball.reset();
+		t_ball.setInPlay(false);
 	}
 
 	if (m_table.m_launchKickerRect.contains(t_ball.getPositionCur()))
 	{
-		sf::Vector2f kickDirection (Hlp::randomRange(-1, 1), 0.0f);
+		sf::Vector2f kickDirection (Hlp::randomRange(-1.0f, 1.0f), 0.0f);
 		t_ball.addForce(kickDirection, M_LAUNCH_KICKER_FORCE);
 	}
 	
@@ -151,6 +152,18 @@ void Collision::inverseRadCheck(Ball& t_ball, sf::Vector2f t_leadingPoint, sf::V
 	}
 }
 
+void Collision::launch(Ball t_balls[4])
+{
+	for (int i = 0; i < 4; i++) // Magic number here from Game to avoid circular reference. FIX!
+	{
+		if (m_table.m_launchBoxRect.contains(t_balls[i].getPositionCur()))
+		{
+			t_balls[i].setInPlay(true);
+		}
+	}
+	
+}
+
 void Collision::flipperCheck(Ball t_ball, sf::CircleShape& t_flipper, float t_max, float t_min)
 {
 	if (Hlp::v2fGetMagnitude(t_flipper.getPosition() - t_ball.getPositionCur()) < t_flipper.getRadius())
@@ -173,6 +186,11 @@ void Collision::flipperCheck(Ball t_ball, sf::CircleShape& t_flipper, float t_ma
 	{
 		t_flipper.setFillColor(sf::Color(220, 220, 220, 255));
 	}
+}
+
+void Collision::setLaunchBoxScalarFromCommand(float t_scalar)
+{
+	m_launchBoxScalarFromCommand = t_scalar;
 }
 
 

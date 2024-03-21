@@ -58,31 +58,6 @@ void Game::run()
 	}
 }
 
-void Game::prep()
-{
-	std::cout << "Called 'prep'.\n\n";
-}
-
-void Game::launch()
-{
-	std::cout << "Called 'launch'.\n\n";
-}
-
-void Game::leftFlip()
-{
-	std::cout << "Called 'left Flip'.\n\n";
-}
-
-void Game::nudge()
-{
-	std::cout << "Called 'nudge'.\n\n";
-}
-
-void Game::rigtFlip()
-{
-	std::cout << "Called 'right Flip'.\n\n";
-}
-
 /// <summary>
 /// handle user and system events/ input
 /// get key presses/ mouse moves etc. from OS
@@ -102,7 +77,11 @@ void Game::processEvents()
 		}
 		if (sf::Event::KeyPressed == newEvent.type) //user pressed a key
 		{
-			processKeys(newEvent);
+			processKeysDn(newEvent);
+		}
+		if (sf::Event::KeyReleased == newEvent.type) // user released a key
+		{
+			processKeysUp(newEvent);
 		}
 		if (sf::Event::MouseButtonPressed == newEvent.type)
 		{
@@ -112,6 +91,10 @@ void Game::processEvents()
 		{
 			processMouseUp(newEvent);
 		}
+		if (sf::Event::MouseWheelScrolled == newEvent.type)
+		{
+			processMouseScroll(newEvent);
+		}
 	}
 }
 
@@ -119,7 +102,7 @@ void Game::processEvents()
 /// deal with key presses from the user
 /// </summary>
 /// <param name="t_event">key press event</param>
-void Game::processKeys(sf::Event t_event)
+void Game::processKeysDn(sf::Event t_event)
 {
 	if (sf::Keyboard::Escape == t_event.key.code)
 	{
@@ -130,21 +113,54 @@ void Game::processKeys(sf::Event t_event)
 		m_render.m_kickTest = true;
 	}
 	
-	if (sf::Keyboard::LShift == t_event.key.code)
+	if ((sf::Keyboard::LShift == t_event.key.code || sf::Keyboard::Left == t_event.key.code) && !m_cmds.m_pressedLeftFlip)
 	{// SO NOW - Do some bools to prevent the key repeating!!
-		leftFlip(); // Do I need leftFlipUp and leftFlipDn?
+		m_cmds.leftFlipDn(); // Do I need leftFlipUp and leftFlipDn?
 	}
-	if (sf::Keyboard::RShift == t_event.key.code)
+	if ((sf::Keyboard::RShift == t_event.key.code || sf::Keyboard::Right == t_event.key.code) && !m_cmds.m_pressedRigtFlip)
 	{
-		rigtFlip();
+		m_cmds.rigtFlipDn();
+	}
+	if ((sf::Keyboard::Up == t_event.key.code && !m_cmds.m_pressedLaunch))
+	{
+		m_cmds.launchDn();
+	}
+	if (sf::Keyboard::Space == t_event.key.code && !m_cmds.m_pressedNudge)
+	{
+		m_cmds.m_pressedNudge = true;
+		m_render.tableKick();
+		for (int i = 0; i < m_ballsCurAmount; i++)
+		{
+			m_cmds.nudgeDn(m_balls[i]);
+		}
+	}
+	if (sf::Keyboard::Down== t_event.key.code && !m_cmds.m_pressedLaunch)
+	{
+		m_cmds.launchDn();
+	}
+	/*if (sf::Keyboard::Return == t_event.key.code)
+	{
+		m_cmds.newBall();
+	}*/
+}
+
+void Game::processKeysUp(sf::Event t_event)
+{
+	if ((sf::Keyboard::LShift == t_event.key.code || sf::Keyboard::Left == t_event.key.code) && m_cmds.m_pressedLeftFlip)
+	{// SO NOW - Do some bools to prevent the key repeating!!
+		m_cmds.leftFlipUp(); // Do I need leftFlipUp and leftFlipDn?
+	}
+	if ((sf::Keyboard::RShift == t_event.key.code || sf::Keyboard::Right == t_event.key.code) && m_cmds.m_pressedRigtFlip)
+	{
+		m_cmds.rigtFlipUp();
 	}
 	if (sf::Keyboard::Space == t_event.key.code)
 	{
-		nudge();
+		m_cmds.m_pressedNudge = false;
 	}
-	if (sf::Keyboard::Down== t_event.key.code)
+	if (sf::Keyboard::Down == t_event.key.code && m_cmds.m_pressedLaunch)
 	{
-		launch();
+		m_cmds.launchUp(m_balls);
 	}
 }
 
@@ -152,6 +168,21 @@ void Game::processMouseDown(sf::Event t_event)
 {
 	m_mouseDown.x = static_cast<float>(t_event.mouseButton.x);
 	m_mouseDown.y = static_cast<float>(t_event.mouseButton.y);
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if (!m_cmds.m_pressedLeftFlip)
+		{
+			m_cmds.leftFlipDn();
+		}
+	}
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+	{
+		if (!m_cmds.m_pressedRigtFlip)
+		{
+			m_cmds.rigtFlipDn();
+		}
+	}
 }
 
 void Game::processMouseUp(sf::Event t_event)
@@ -163,6 +194,18 @@ void Game::processMouseUp(sf::Event t_event)
 
 	displacement = (m_mouseDown - m_mouseUp) * M_NUDGE_SCALAR;
 	
+	std::cout << "Displacement is " << Hlp::v2fGetMagnitude(displacement) << ".\n\n";
+
+	if (m_cmds.M_NUDGE_THRESHOLD < Hlp::v2fGetMagnitude(displacement))
+	{
+		m_render.tableKick();
+
+		for (int i = 0; i < m_ballsCurAmount; i++)
+		{
+			m_balls[i].addForce(Hlp::v2fGetNormal(displacement), Hlp::v2fGetMagnitude(displacement));
+		}
+	}
+
 	// std::cout << displacement.x << "-" << displacement.y << "\n";
 
 	/*float headingD;
@@ -171,15 +214,44 @@ void Game::processMouseUp(sf::Event t_event)
 	headingD = headingR * 180.0f / M_PI;
 	headingD = headingD + 90.0f;*/
 
-	if (sf::Mouse::Left == t_event.mouseButton.button)
-	{
+	//if (sf::Mouse::Left == t_event.mouseButton.button)
+	//{
 		// m_bigPlaneVelocity = displacement / 100.0f;
-		for (int i = 0; i < m_ballsCurAmount; i++)
-		{
-			m_balls[i].addForce(Hlp::v2fGetNormal(displacement), Hlp::v2fGetMagnitude(displacement));
-		}
+		
 		// m_bigHeading = headingD;
 		// m_bigPlaneSprite.setRotation(headingD);
+	//}
+
+	if (m_cmds.m_pressedLeftFlip)
+	{
+		m_cmds.leftFlipUp();
+	}
+
+	if (m_cmds.m_pressedRigtFlip)
+	{
+		m_cmds.rigtFlipUp();
+	}
+}
+
+void Game::processMouseScroll(sf::Event t_event)
+{
+	if (t_event.mouseWheelScroll.delta > 0)
+	{
+		m_collision.setLaunchBoxScalarFromCommand(m_cmds.m_launchTimer);
+		m_cmds.m_launchTimer = 0.0f;
+		m_cmds.launchUp(m_balls);
+	}
+	else
+	{
+		if (m_cmds.m_launchTimer < m_cmds.M_LAUNCH_PERIOD)
+		{
+			m_cmds.m_launchTimer += m_cmds.M_LAUNCH_WHEEL_INCREMENT;
+		}
+		else
+		{
+			m_cmds.m_launchTimer = m_cmds.M_LAUNCH_PERIOD;
+		}
+		
 	}
 }
 
@@ -214,6 +286,8 @@ void Game::update(sf::Time t_deltaTime)
 	m_render.visualDebugLines(m_mouseCur);
 
 	m_render.screenSettle(t_deltaTime);
+
+	m_cmds.update(t_deltaTime);
 }
 
 /// <summary>

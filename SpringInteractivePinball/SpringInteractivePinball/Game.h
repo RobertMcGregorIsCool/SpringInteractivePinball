@@ -16,6 +16,7 @@
 #include "Collision.h"
 #include "Render.h"
 #include "PinballAud.h"
+#include "Commands.h"
 #include <cstdlib>
 
 class Game
@@ -27,12 +28,6 @@ public:
 	/// main method for game
 	/// </summary>
 	void run();
-	
-	void prep();
-	void launch();
-	void leftFlip();
-	void nudge();
-	void rigtFlip();
 
 private:
 	void setup();
@@ -46,9 +41,11 @@ private:
 	void update(sf::Time t_deltaTime);
 
 	void processEvents();
-	void processKeys(sf::Event t_event);
+	void processKeysDn(sf::Event t_event);
+	void processKeysUp(sf::Event t_event);
 	void processMouseDown(sf::Event t_event);
 	void processMouseUp(sf::Event t_event);
+	void processMouseScroll(sf::Event t_event);
 
 	void updateScoreBoard();
 
@@ -59,6 +56,7 @@ private:
 	sf::RenderWindow m_window; // main SFML window
 	Render m_render{ m_window, m_table, m_pinballAudio };
 	Collision m_collision{ m_table, m_render};
+	Commands m_cmds{ m_collision };
 
 	// sf::Font m_ArialBlackfont; // font used by message
 	sf::Font m_karnivorDigitFont; // font used by message
@@ -76,8 +74,6 @@ private:
 	Ball m_balls[M_MAX_BALLS];
 
 	//float m_flipperTestPos = 0.0f;
-	
-	
 
 	bool m_exitGame; // control exiting game
 

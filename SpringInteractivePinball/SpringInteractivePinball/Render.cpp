@@ -55,7 +55,7 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.draw(m_table.m_roundedTopBot);
 	m_window.draw(m_table.m_launchBox);
 	m_window.draw(m_table.m_launchKicker);
-	m_window.draw(m_table.m_noCollideLaunch);
+	// m_window.draw(m_table.m_noCollideLaunch);
 	m_window.draw(m_table.m_noCollideGutterA);
 	m_window.draw(m_table.m_gutterTeleport);
 	m_window.draw(m_table.m_launchWall);
@@ -85,12 +85,12 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 
 void Render::tableKick(float scalar)
 {
-	float moveRandom = static_cast<float>(Hlp::randomRange(4.0f, -4.0f) * scalar);
+	float moveRandom = static_cast<float>(Hlp::randomRange(50.0f, -50.0f) * scalar);
 	m_view.move(sf::Vector2f(moveRandom, moveRandom));
-	float rotRandom = static_cast<float>(Hlp::randomRange(-0.125f, 0.125f) * scalar);
-	m_view.rotate(rotRandom);
-	float zoomRandom = static_cast<float>(Hlp::randomRange(-0.125f, 0.125f) * scalar);
-	m_view.zoom(zoomRandom);
+	//float rotRandom = static_cast<float>(Hlp::randomRange(-0.001f, 0.001f) * scalar);
+	//m_view.rotate(rotRandom);
+	//float zoomRandom = static_cast<float>(Hlp::randomRange(-0.0125f, 0.0125f) * scalar);
+	//m_view.zoom(zoomRandom);
 	m_window.setView(m_view);
 
 	m_pinballAud.m_sndRattle.play();

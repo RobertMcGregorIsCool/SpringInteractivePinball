@@ -22,6 +22,8 @@ public:
 
 	void render(Ball t_balls[4], sf::Text t_scoreBoard);
 
+	sf::Texture m_texPartyLand;
+
 	Table& m_table;
 	PinballAud& m_pinballAud;
 

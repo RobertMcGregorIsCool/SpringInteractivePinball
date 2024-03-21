@@ -214,7 +214,10 @@ void Game::setupScoreBoard()
 /// <summary>
 /// load the texture and setup the sprite for the logo
 /// </summary>
-void Game::setupSprite() {}
+void Game::setupSprite() 
+{
+
+}
 
 void Game::updateScoreBoard()
 {

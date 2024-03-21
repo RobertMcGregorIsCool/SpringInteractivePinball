@@ -14,6 +14,8 @@ public:
 	Table();
 	~Table();
 
+	
+
 	sf::RectangleShape m_testBox;
 	sf::Rect<float> m_testBoxRect;
 	
@@ -22,6 +24,9 @@ public:
 
 	sf::RectangleShape m_launchWall;
 	sf::Rect<float> m_launchWallRect;
+
+	sf::RectangleShape m_noCollideLaunch;
+	sf::Rect<float>m_noCollideLaunchRect;
 
 	sf::CircleShape m_roundedTopBot;
 

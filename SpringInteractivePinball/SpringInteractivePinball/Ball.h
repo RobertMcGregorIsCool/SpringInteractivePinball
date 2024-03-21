@@ -46,7 +46,7 @@ public:
 private:
 	sf::Sprite ballSprite;
 
-	const sf::Vector2f M_POS_START = sf::Vector2f(Globals::WIDTH * 0.9f, Globals::HEIGHT * 0.9f);
+	const sf::Vector2f M_POS_START = sf::Vector2f(Globals::WIDTH * 0.96f, Globals::HEIGHT * 0.9f);
 
 	sf::Vector2f m_velocityCur = sf::Vector2f{ 0.0f,0.0f };
 	const float	m_velocityMax = 1000.0f;

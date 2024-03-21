@@ -10,8 +10,16 @@
 
 Render::Render(sf::RenderWindow& t_window, Table& t_table, PinballAud& t_pinballAud) : m_window(t_window), m_table(t_table), m_pinballAud{ t_pinballAud } //, Collision& t_col) : m_window(t_window), m_collision(t_col)
 {
-	m_backgroundImage.setOutlineColor(sf::Color(26, 32, 39, 255)); // (sf::Color::Magenta);
-	m_backgroundImage.setFillColor(sf::Color(41, 51, 61, 255)); // (sf::Color::White);
+
+
+	if (!m_texPartyLand.loadFromFile("ASSETS\\IMAGES\\partyLand.gif"))
+	{
+		std::cout << "Load fail partyland.gif \n\n";
+	}
+
+	m_backgroundImage.setOutlineColor(sf::Color(26, 32, 39, 200)); // (sf::Color::Magenta);
+	m_backgroundImage.setTexture(&m_texPartyLand);
+	// m_backgroundImage.setFillColor(sf::Color(41, 51, 61, 255)); // (sf::Color::White);
 	m_backgroundImage.setOutlineThickness(m_backgroundImageThickness);
 	m_backgroundImage.setSize(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
 	m_backgroundImage.setOrigin(sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f));
@@ -44,11 +52,12 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.clear(sf::Color::Black);
 	m_window.draw(m_floorImage);
 	m_window.draw(m_backgroundImage);
-	
+	m_window.draw(m_table.m_roundedTopBot);
 	m_window.draw(m_table.m_launchBox);
+	m_window.draw(m_table.m_noCollideLaunch);
 	m_window.draw(m_table.m_launchWall);
 
-	m_window.draw(m_table.m_flipperTest);
+	//m_window.draw(m_table.m_flipperTest);
 	m_window.draw(m_flipperLine);
 	m_window.draw(m_mouseLine);
 	m_window.draw(m_mouseLineReflect);
@@ -58,7 +67,7 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.draw(m_table.m_testBox);
 	
 	m_window.draw(m_table.m_bumper01);
-	m_window.draw(m_table.m_roundedTopBot);
+	
 	m_window.draw(t_scoreBoard);
 
 

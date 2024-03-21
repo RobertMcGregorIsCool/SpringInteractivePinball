@@ -25,7 +25,7 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 
 	if (m_table.m_launchBoxRect.contains(t_ball.getPositionCur()))
 	{
-		t_ball.addForce(sf::Vector2f(0, -1.0f), 4096.0f * 16.0f);
+		t_ball.addForce(sf::Vector2f(-0.00001f, -1.0f), 4096.0f * 16.0f);
 	}
 
 	if (m_table.m_launchWallRect.contains(leadingPointOfBall))
@@ -59,7 +59,11 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 
 	bumperCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_bumper01);
 
-	inverseRadCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_roundedTopBot);
+	if (!m_table.m_noCollideLaunchRect.contains(t_ball.getPositionCur()))
+	{
+		inverseRadCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_roundedTopBot);
+	}
+	
 
 	flipperCheck(t_ball, m_table.m_flipperTest, 300.0f, 240.0f);
 	// flipperCheck(t_ball, m_table.m_flipperTest, 120.0f, 60.0f);

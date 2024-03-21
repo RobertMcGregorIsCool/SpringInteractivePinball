@@ -58,6 +58,31 @@ void Game::run()
 	}
 }
 
+void Game::prep()
+{
+	std::cout << "Called 'prep'.\n\n";
+}
+
+void Game::launch()
+{
+	std::cout << "Called 'launch'.\n\n";
+}
+
+void Game::leftFlip()
+{
+	std::cout << "Called 'left Flip'.\n\n";
+}
+
+void Game::nudge()
+{
+	std::cout << "Called 'nudge'.\n\n";
+}
+
+void Game::rigtFlip()
+{
+	std::cout << "Called 'right Flip'.\n\n";
+}
+
 /// <summary>
 /// handle user and system events/ input
 /// get key presses/ mouse moves etc. from OS
@@ -103,6 +128,23 @@ void Game::processKeys(sf::Event t_event)
 	if (sf::Keyboard::K == t_event.key.code)
 	{
 		m_render.m_kickTest = true;
+	}
+	
+	if (sf::Keyboard::LShift == t_event.key.code)
+	{// SO NOW - Do some bools to prevent the key repeating!!
+		leftFlip(); // Do I need leftFlipUp and leftFlipDn?
+	}
+	if (sf::Keyboard::RShift == t_event.key.code)
+	{
+		rigtFlip();
+	}
+	if (sf::Keyboard::Space == t_event.key.code)
+	{
+		nudge();
+	}
+	if (sf::Keyboard::Down== t_event.key.code)
+	{
+		launch();
 	}
 }
 

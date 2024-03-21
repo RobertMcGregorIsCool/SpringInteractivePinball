@@ -71,7 +71,6 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 
 	if (m_table.m_launchKickerRect.contains(t_ball.getPositionCur()))
 	{
-		std::cout << "Kicked!\n\n";
 		sf::Vector2f kickDirection (Hlp::randomRange(-1, 1), 0.0f);
 		t_ball.addForce(kickDirection, M_LAUNCH_KICKER_FORCE);
 	}

@@ -28,6 +28,11 @@ public:
 	/// </summary>
 	void run();
 	
+	void prep();
+	void launch();
+	void leftFlip();
+	void nudge();
+	void rigtFlip();
 
 private:
 	void setup();

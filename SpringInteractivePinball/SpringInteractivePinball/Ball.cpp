@@ -63,6 +63,13 @@ void Ball::setPosition(sf::Vector2f newPosition)
 	// Sprite.setPosition(newPosition) will go here soon.
 }
 
+void Ball::teleport(sf::Vector2f t_newPosition)
+{
+	m_positionNxt = t_newPosition;
+	setPosition(t_newPosition);
+	setVelocity(sf::Vector2f(0.0f, 0.0f));
+}
+
 sf::Vector2f Ball::getVelocity()
 {
 	return m_velocityCur;
@@ -76,6 +83,11 @@ void Ball::setVelocity(sf::Vector2f t_velocity)
 sf::Vector2f Ball::getPositionCur()
 {
 	return m_positionCur;
+}
+
+void Ball::reset()
+{
+	teleport(M_POS_START);
 }
 
 

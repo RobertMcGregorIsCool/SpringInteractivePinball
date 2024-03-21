@@ -33,7 +33,7 @@ public:
 
 	const float M_BUMPER_COLLISION_ADJUSTMENT = 16.0f;
 
-	
+	const float M_LAUNCH_KICKER_FORCE = 100.0f;
 
 private:	
 	

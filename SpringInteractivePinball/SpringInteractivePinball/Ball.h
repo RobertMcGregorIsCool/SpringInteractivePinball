@@ -39,9 +39,13 @@ public:
 
 	void setPosition(sf::Vector2f t_newPosition);
 
+	void teleport(sf::Vector2f t_newPosition);
+
 	sf::Vector2f getVelocity();
 	void setVelocity(sf::Vector2f t_velocity);
 	sf::Vector2f getPositionCur();
+
+	void reset();
 
 private:
 	sf::Sprite ballSprite;

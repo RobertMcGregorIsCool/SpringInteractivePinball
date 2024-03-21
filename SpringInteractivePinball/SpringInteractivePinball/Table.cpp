@@ -28,11 +28,29 @@ Table::Table()
 	m_launchBox.setPosition(Globals::WIDTH * 0.95f, Globals::HEIGHT * 1.0f);
 	m_launchBoxRect = m_launchBox.getGlobalBounds();
 
+	m_launchKicker.setSize(sf::Vector2f(50.0f, 50.0f));
+	m_launchKicker.setOrigin(m_launchKicker.getSize().x * 0.5f, m_launchKicker.getSize().y);
+	m_launchKicker.setFillColor(sf::Color::Green);
+	m_launchKicker.setPosition(Globals::WIDTH * 0.95f, Globals::HEIGHT * 0.16f);
+	m_launchKickerRect = m_launchKicker.getGlobalBounds();
+
 	m_noCollideLaunch.setSize(sf::Vector2f(50.0f, 300.0f));
 	m_noCollideLaunch.setOrigin(m_noCollideLaunch.getSize().x * 0.5f, m_noCollideLaunch.getSize().y);
 	m_noCollideLaunch.setFillColor(sf::Color(0,0,0,200));
 	m_noCollideLaunch.setPosition(Globals::WIDTH * 0.95f, Globals::HEIGHT * 1.0f);
 	m_noCollideLaunchRect = m_noCollideLaunch.getGlobalBounds();
+
+	m_noCollideGutterA.setSize(sf::Vector2f(150.0f, 80.0f));
+	m_noCollideGutterA.setOrigin(m_noCollideGutterA.getSize().x * 0.5f, m_noCollideLaunch.getSize().y);
+	m_noCollideGutterA.setFillColor(sf::Color(0, 0, 0, 200));
+	m_noCollideGutterA.setPosition(Globals::WIDTH * 0.42f, Globals::HEIGHT * 1.205f);
+	m_noCollideGutterARect = m_noCollideGutterA.getGlobalBounds();
+
+	m_gutterTeleport.setSize(sf::Vector2f(150.0f, 20.0f));
+	m_gutterTeleport.setOrigin(m_gutterTeleport.getSize().x * 0.5f, m_noCollideLaunch.getSize().y);
+	m_gutterTeleport.setFillColor(sf::Color(99, 79, 23, 230));
+	m_gutterTeleport.setPosition(Globals::WIDTH * 0.42f, Globals::HEIGHT * 1.28f);
+	m_gutterTeleportRect = m_gutterTeleport.getGlobalBounds();
 
 	m_bumper01.setRadius(48.0f);
 	m_bumper01.setOrigin(m_bumper01.getRadius(), m_bumper01.getRadius());

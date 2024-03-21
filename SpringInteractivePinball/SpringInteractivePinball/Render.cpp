@@ -54,7 +54,10 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.draw(m_backgroundImage);
 	m_window.draw(m_table.m_roundedTopBot);
 	m_window.draw(m_table.m_launchBox);
+	m_window.draw(m_table.m_launchKicker);
 	m_window.draw(m_table.m_noCollideLaunch);
+	m_window.draw(m_table.m_noCollideGutterA);
+	m_window.draw(m_table.m_gutterTeleport);
 	m_window.draw(m_table.m_launchWall);
 
 	//m_window.draw(m_table.m_flipperTest);

@@ -59,9 +59,21 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 
 	bumperCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_bumper01);
 
-	if (!m_table.m_noCollideLaunchRect.contains(t_ball.getPositionCur()))
+	if (!m_table.m_noCollideLaunchRect.contains(t_ball.getPositionCur()) && !m_table.m_noCollideGutterARect.contains(t_ball.getPositionCur()))
 	{
 		inverseRadCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_roundedTopBot);
+	}
+
+	if (m_table.m_gutterTeleportRect.contains(t_ball.getPositionCur()))
+	{
+		t_ball.reset();
+	}
+
+	if (m_table.m_launchKickerRect.contains(t_ball.getPositionCur()))
+	{
+		std::cout << "Kicked!\n\n";
+		sf::Vector2f kickDirection (Hlp::randomRange(-1, 1), 0.0f);
+		t_ball.addForce(kickDirection, M_LAUNCH_KICKER_FORCE);
 	}
 	
 

@@ -10,6 +10,7 @@
 /// Don't forget the endif at the bottom
 /// </summary>
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include "Ball.h"
 #include "Table.h"
@@ -30,6 +31,8 @@ public:
 	void run();
 
 private:
+	
+	
 	void setup();
 	void setupFontAndText();
 	void setupScoreBoard();
@@ -39,6 +42,8 @@ private:
 	void render();
 
 	void update(sf::Time t_deltaTime);
+
+	
 
 	void processEvents();
 	void processKeysDn(sf::Event t_event);
@@ -51,12 +56,15 @@ private:
 
 	const float M_NUDGE_SCALAR = 4.0f;
 
+	Globals m_globals;
 	Table	m_table;
 	PinballAud m_pinballAudio;
 	sf::RenderWindow m_window; // main SFML window
 	Render m_render{ m_window, m_table, m_pinballAudio };
-	Collision m_collision{ m_table, m_render};
-	Commands m_cmds{ m_collision };
+	Collision m_collision{ m_table, m_render, m_globals};
+	Commands m_cmds{ m_collision, m_table };
+
+
 
 	// sf::Font m_ArialBlackfont; // font used by message
 	sf::Font m_karnivorDigitFont; // font used by message

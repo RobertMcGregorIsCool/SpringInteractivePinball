@@ -24,8 +24,9 @@ public:
 	const float M_NUDGE_THRESHOLD = 500.0f;
 
 	Collision& m_col;
+	Table& m_table;
 
-	Commands(Collision& t_col);
+	Commands(Collision& t_col, Table& t_table);
 	~Commands();
 
 	void update(sf::Time t_deltaTime);
@@ -40,5 +41,6 @@ public:
 	void rigtFlipDn();
 	void rigtFlipUp();
 	//void newBall();
+	void teleportBall(Ball& t_ball, sf::Vector2f t_mouseCur);
 };
 

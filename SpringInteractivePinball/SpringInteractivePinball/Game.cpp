@@ -38,6 +38,7 @@ Game::~Game(){}
 /// </summary>
 void Game::run()
 {	
+	// m_globals.m_timeScalar = 1.0f;
 	srand(time(nullptr));
 
 	sf::Clock clock;
@@ -52,7 +53,7 @@ void Game::run()
 		{
 			timeSinceLastUpdate -= timePerFrame;
 			processEvents(); // at least 60 fps
-			update(timePerFrame); //60 fps
+			update(timePerFrame* m_globals.m_timeScalar); //60 fps
 		}
 		render(); // as many as possible
 	}
@@ -115,10 +116,12 @@ void Game::processKeysDn(sf::Event t_event)
 	
 	if ((sf::Keyboard::LShift == t_event.key.code || sf::Keyboard::Left == t_event.key.code) && !m_cmds.m_pressedLeftFlip)
 	{// SO NOW - Do some bools to prevent the key repeating!!
-		m_cmds.leftFlipDn(); // Do I need leftFlipUp and leftFlipDn?
+		//m_globals.scaleTimeCheck(2.0f);
+		m_cmds.leftFlipDn();
 	}
 	if ((sf::Keyboard::RShift == t_event.key.code || sf::Keyboard::Right == t_event.key.code) && !m_cmds.m_pressedRigtFlip)
 	{
+		//m_globals.scaleTimeCheck(2.0f);
 		m_cmds.rigtFlipDn();
 	}
 	if ((sf::Keyboard::Up == t_event.key.code && !m_cmds.m_pressedLaunch))
@@ -142,16 +145,25 @@ void Game::processKeysDn(sf::Event t_event)
 	{
 		m_cmds.newBall();
 	}*/
+	if (sf::Keyboard::T == t_event.key.code)
+	{
+		for (int i = 0; i < m_ballsCurAmount; i++)
+		{
+			m_cmds.teleportBall(m_balls[i], sf::Vector2f(static_cast<float>(sf::Mouse::getPosition(m_window).x), static_cast<float>(sf::Mouse::getPosition(m_window).y)));
+		}
+	}
 }
 
 void Game::processKeysUp(sf::Event t_event)
 {
 	if ((sf::Keyboard::LShift == t_event.key.code || sf::Keyboard::Left == t_event.key.code) && m_cmds.m_pressedLeftFlip)
 	{// SO NOW - Do some bools to prevent the key repeating!!
-		m_cmds.leftFlipUp(); // Do I need leftFlipUp and leftFlipDn?
+		m_globals.scaleTimeCheck(2.0f);
+		m_cmds.leftFlipUp();
 	}
 	if ((sf::Keyboard::RShift == t_event.key.code || sf::Keyboard::Right == t_event.key.code) && m_cmds.m_pressedRigtFlip)
 	{
+		m_globals.scaleTimeCheck(2.0f);
 		m_cmds.rigtFlipUp();
 	}
 	if (sf::Keyboard::Space == t_event.key.code)
@@ -161,6 +173,16 @@ void Game::processKeysUp(sf::Event t_event)
 	if (sf::Keyboard::Down == t_event.key.code && m_cmds.m_pressedLaunch)
 	{
 		m_cmds.launchUp(m_balls);
+	}
+
+	if (sf::Keyboard::Hyphen == t_event.key.code)
+	{
+		m_globals.scaleTimeCheck(-0.05f);
+	}
+
+	if (sf::Keyboard::Equal == t_event.key.code)
+	{
+		m_globals.scaleTimeCheck(0.05f);
 	}
 }
 
@@ -196,15 +218,15 @@ void Game::processMouseUp(sf::Event t_event)
 	
 	std::cout << "Displacement is " << Hlp::v2fGetMagnitude(displacement) << ".\n\n";
 
-	if (m_cmds.M_NUDGE_THRESHOLD < Hlp::v2fGetMagnitude(displacement))
-	{
-		m_render.tableKick();
+	//if (m_cmds.M_NUDGE_THRESHOLD < Hlp::v2fGetMagnitude(displacement))
+	//{
+	//	m_render.tableKick();
 
 		for (int i = 0; i < m_ballsCurAmount; i++)
 		{
 			m_balls[i].addForce(Hlp::v2fGetNormal(displacement), Hlp::v2fGetMagnitude(displacement));
 		}
-	}
+	//}
 
 	// std::cout << displacement.x << "-" << displacement.y << "\n";
 
@@ -283,12 +305,15 @@ void Game::update(sf::Time t_deltaTime)
 		m_balls[i].setPosition(m_balls[i].m_positionNxt);
 	}
 
-	m_render.visualDebugLines(m_mouseCur);
+	// m_render.visualDebugLines(m_mouseCur);
 
 	m_render.screenSettle(t_deltaTime);
 
 	m_cmds.update(t_deltaTime);
 }
+
+
+
 
 /// <summary>
 /// draw the frame and then switch buffers
@@ -344,7 +369,9 @@ void Game::updateScoreBoard()
 			"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
 			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)) + //);// +
 			//"\nMouseVec: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
-			"\nBall veloc: " + std::to_string(m_balls[0].getVelocity().x) + " | " + std::to_string(m_balls[0].getVelocity().y));
+			"\nBall veloc: " + std::to_string(m_balls[0].getVelocity().x) + " | " + std::to_string(m_balls[0].getVelocity().y) +
+			"\nMX: " + std::to_string(sf::Mouse::getPosition(m_window).x) + " | MY: " + std::to_string(sf::Mouse::getPosition(m_window).y) +
+			"\nTime Scalar is: " + std::to_string(m_globals.m_timeScalar));
 	}
 }
 

@@ -35,6 +35,8 @@ public:
 
 	void redirect (sf::Vector2f t_dir);
 
+	void flipperImpact(sf::Vector2f t_dir);
+
 	void update(sf::Time t_deltaTime);
 
 	void setPosition(sf::Vector2f t_newPosition);

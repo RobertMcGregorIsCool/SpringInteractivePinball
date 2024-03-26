@@ -1,6 +1,6 @@
 #include "Commands.h"
 
-Commands::Commands(Collision& t_col) : m_col{t_col}
+Commands::Commands(Collision& t_col, Table& t_table) : m_col{t_col}, m_table{t_table}
 {
 }
 
@@ -40,13 +40,15 @@ void Commands::launchUp(Ball t_balls[4])
 void Commands::leftFlipDn()
 {// Change collisions
 	m_pressedLeftFlip = true;
-	std::cout << "Called 'left FlipDn'.\n\n";
+	m_col.setLeftFlipperActive(m_pressedLeftFlip);
+	
 }
 
 void Commands::leftFlipUp()
 {
 	m_pressedLeftFlip = false;
-	std::cout << "Called 'leftFlipUp'.\n\n";
+	m_col.setLeftFlipperActive(m_pressedLeftFlip);
+	
 }
 
 void Commands::nudgeDn(Ball t_ball)
@@ -63,13 +65,21 @@ void Commands::nudgeUp()
 void Commands::rigtFlipDn()
 {// Change collisions
 	m_pressedRigtFlip = true;
-	std::cout << "Called 'right FlipDn'.\n\n";
+	m_col.setRigtFlipperActive(m_pressedRigtFlip);
+	m_table.m_flipperVisualRigt.setRotation(300.0f + 90.0f);
 }
 
 void Commands::rigtFlipUp()
 {
 	m_pressedRigtFlip = false;
-	std::cout << "Called 'rigtFlipUp'.\n\n";
+	m_col.setRigtFlipperActive(m_pressedRigtFlip);
+	m_table.m_flipperVisualRigt.setRotation(260.0f + 90.0f);
+}
+
+void Commands::teleportBall(Ball& t_ball, sf::Vector2f t_mouseCur)
+{
+	t_ball.setInPlay(true);
+	t_ball.teleport(t_mouseCur);
 }
 
 //void Commands::newBall()

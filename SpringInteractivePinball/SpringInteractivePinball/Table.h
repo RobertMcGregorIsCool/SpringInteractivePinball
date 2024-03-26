@@ -16,8 +16,11 @@ public:
 
 	
 
-	sf::RectangleShape m_testBox;
-	sf::Rect<float> m_testBoxRect;
+	sf::RectangleShape m_gutterWallLeft;
+	sf::Rect<float> m_gutterWallLeftRect;
+
+	sf::RectangleShape m_gutterWallRigt;
+	sf::Rect<float> m_gutterWallRigtRect;
 	
 	sf::RectangleShape m_launchBox;
 	sf::Rect<float> m_launchBoxRect;
@@ -34,13 +37,18 @@ public:
 	sf::RectangleShape m_noCollideGutterA;
 	sf::Rect<float>m_noCollideGutterARect;
 
-	sf::RectangleShape m_gutterTeleport;
-	sf::Rect<float>m_gutterTeleportRect;
+	//sf::RectangleShape m_gutterTeleport;
+	//sf::Rect<float>m_gutterTeleportRect;
+
+	sf::RectangleShape m_flipperVisualRigt;
+
+	sf::RectangleShape m_flipperVisualLeft; // <<< WORKING ON THIS!
 
 	sf::CircleShape m_roundedTopBot;
 
 	sf::CircleShape m_bumper01;
 
-	sf::CircleShape m_flipperTest;
+	sf::CircleShape m_flipperRigt;
+	sf::CircleShape m_flipperLeft; // <<< WORKING ON THIS!
 };
 

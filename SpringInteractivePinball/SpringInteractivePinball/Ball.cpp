@@ -29,6 +29,12 @@ void Ball::redirect(sf::Vector2f t_dir)
 	m_velocityCur = normalDir * Hlp::v2fGetMagnitude(m_velocityCur);
 }
 
+void Ball::flipperImpact(sf::Vector2f t_dir)
+{
+	sf::Vector2f flipperDir = Hlp::v2fGetNormal(t_dir);
+	m_velocityCur += flipperDir * Hlp::v2fGetMagnitude(m_velocityCur);
+}
+
 void Ball::update(sf::Time t_deltaTime)
 {// Continually called in Game::Update()?
 	if (m_inPlay)

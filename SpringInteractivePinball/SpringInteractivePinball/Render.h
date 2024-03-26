@@ -40,9 +40,16 @@ public:
 	sf::VertexArray m_mouseLine{ sf::Lines };
 	sf::VertexArray m_mouseLineReflect{ sf::Lines };
 
+	sf::VertexArray m_ballLine {sf::Lines };
+	sf::VertexArray m_ballLineReflect{sf::Lines };
+
+	sf::VertexArray m_flippedBallTrajectory {sf::Lines};
+
 	void tableKick(float scalar = 1.0f);
 	bool screenSettle(sf::Time t_deltaTime);
 	void visualDebugLines(sf::Vector2i t_mouseCur);
+	void visualDebugFlipper(Ball t_ball, sf::Vector2f t_leadingPos);
+	void visualDebugBall(sf::Vector2f t_position, sf::Vector2f t_lineBounce);
 
 	bool m_kickTest = false;
 

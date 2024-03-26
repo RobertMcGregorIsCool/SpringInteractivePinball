@@ -39,9 +39,9 @@ Render::Render(sf::RenderWindow& t_window, Table& t_table, PinballAud& t_pinball
 	sf::Vertex point;
 	point.color = sf::Color::Blue;
 	m_flipperLine.clear();
-	point.position = m_table.m_flipperTest.getPosition();
+	point.position = m_table.m_flipperRigt.getPosition();
 	m_flipperLine.append(point);
-	point.position = m_table.m_flipperTest.getPosition() + (m_flipperDir * m_table.m_flipperTest.getRadius());
+	point.position = m_table.m_flipperRigt.getPosition() + (m_flipperDir * m_table.m_flipperRigt.getRadius());
 	m_flipperLine.append(point);
 }
 
@@ -56,18 +56,29 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.draw(m_table.m_launchBox);
 	m_window.draw(m_table.m_launchKicker);
 	// m_window.draw(m_table.m_noCollideLaunch);
+	m_window.draw(m_table.m_flipperRigt);
 	m_window.draw(m_table.m_noCollideGutterA);
-	m_window.draw(m_table.m_gutterTeleport);
+	// m_window.draw(m_table.m_gutterTeleport); Not needed!
 	m_window.draw(m_table.m_launchWall);
 
-	//m_window.draw(m_table.m_flipperTest);
+	
 	m_window.draw(m_flipperLine);
-	m_window.draw(m_mouseLine);
-	m_window.draw(m_mouseLineReflect);
+	
+	//m_window.draw(m_mouseLine);
+	//m_window.draw(m_mouseLineReflect);
 
 	m_window.draw(t_balls[0].m_ballShape);
 
-	m_window.draw(m_table.m_testBox);
+	m_window.draw(m_ballLine);
+	m_window.draw(m_ballLineReflect);
+
+	m_window.draw(m_table.m_flipperVisualRigt);
+
+
+	m_window.draw(m_flippedBallTrajectory);
+
+	m_window.draw(m_table.m_gutterWallLeft);
+	m_window.draw(m_table.m_gutterWallRigt);
 	
 	m_window.draw(m_table.m_bumper01);
 	
@@ -122,7 +133,7 @@ void Render::visualDebugLines(sf::Vector2i t_mouseCur)
 	sf::Vertex point;
 	point.color = sf::Color::Red;
 	m_mouseLine.clear();
-	point.position = m_table.m_flipperTest.getPosition();
+	point.position = m_table.m_flipperRigt.getPosition();
 	m_mouseLine.append(point);
 	point.position = m_mouseCurFloat;
 	m_mouseLine.append(point);
@@ -131,9 +142,45 @@ void Render::visualDebugLines(sf::Vector2i t_mouseCur)
 	m_mouseLineReflect.clear();
 	point.position = m_mouseCurFloat;
 	m_mouseLineReflect.append(point);
-	sf::Vector2f lineBounce = m_table.m_flipperTest.getPosition() - m_mouseCurFloat;
+	sf::Vector2f lineBounce = m_table.m_flipperRigt.getPosition() - m_mouseCurFloat;
 	lineBounce = Hlp::v2fPerpendicularClockwise(lineBounce);
 
 	point.position = m_mouseCurFloat + lineBounce;
 	m_mouseLineReflect.append(point);
 }
+
+void Render::visualDebugFlipper(Ball t_ball, sf::Vector2f t_leadingPos)
+{
+	// std::cout << "I'm being called!\n";
+	sf::Vertex point;
+	point.color = sf::Color::Magenta;
+	m_ballLine.clear();
+	point.position = m_table.m_flipperRigt.getPosition();
+	m_ballLine.append(point);
+	point.position = t_ball.getPositionCur();
+	m_ballLine.append(point);
+
+	point.color = sf::Color(255, 255, 0, 255);
+	m_ballLineReflect.clear();
+	point.position = t_ball.getPositionCur();
+	m_ballLineReflect.append(point);
+	sf::Vector2f lineBounce = m_table.m_flipperRigt.getPosition() - t_ball.getPositionCur();
+	lineBounce = Hlp::v2fPerpendicularClockwise(lineBounce);
+
+	point.position = t_ball.getPositionCur() + lineBounce;
+	m_ballLineReflect.append(point);
+}
+
+void Render::visualDebugBall(sf::Vector2f t_position, sf::Vector2f t_lineBounce)
+{
+	sf::Vertex point;
+	point.color = sf::Color::Cyan;
+	m_flippedBallTrajectory.clear();
+	
+	point.position = t_position;
+	m_flippedBallTrajectory.append(point);
+	
+	point.position = t_position + t_lineBounce;
+	m_flippedBallTrajectory.append(point);
+}
+

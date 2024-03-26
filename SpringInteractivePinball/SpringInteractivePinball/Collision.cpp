@@ -8,7 +8,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <iostream>
 
-Collision::Collision(Table& t_table, Render& t_render) : m_table{ t_table }, m_render{t_render}{}
+Collision::Collision(Table& t_table, Render& t_render, Globals& t_globals) : m_table{ t_table }, m_render{ t_render }, m_globals{ t_globals } {}
 
 Collision::~Collision(){}
 
@@ -39,22 +39,22 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 
 	boundsCheck(true, t_ball, leadingPointOfBall, 0.0f, high, 0.0f, wide);
 
-	if (m_table.m_testBoxRect.contains(leadingPointOfBall))
+	if (m_table.m_gutterWallLeftRect.contains(leadingPointOfBall))
 	{
-		m_table.m_testBox.setFillColor(sf::Color::Green);
+		m_table.m_gutterWallLeft.setFillColor(sf::Color::Green);
 
 		boundsCheck(false, t_ball, leadingPointOfBall,
-			m_table.m_testBox.getGlobalBounds().top,
-			m_table.m_testBox.getGlobalBounds().top + m_table.m_testBox.getGlobalBounds().height,
-			m_table.m_testBox.getGlobalBounds().left,
-			m_table.m_testBox.getGlobalBounds().left + m_table.m_testBox.getGlobalBounds().width);
+			m_table.m_gutterWallLeft.getGlobalBounds().top,
+			m_table.m_gutterWallLeft.getGlobalBounds().top + m_table.m_gutterWallLeft.getGlobalBounds().height,
+			m_table.m_gutterWallLeft.getGlobalBounds().left,
+			m_table.m_gutterWallLeft.getGlobalBounds().left + m_table.m_gutterWallLeft.getGlobalBounds().width);
 			m_render.tableKick(2.f);
 			//sf::Vector2i newWindowPos = m_window.getPosition() + sf::Vector2i(0, 30);
 			//m_window.setPosition(newWindowPos);
 	}
 	else
 	{
-		m_table.m_testBox.setFillColor(sf::Color(99, 79, 23, 255));
+		m_table.m_gutterWallLeft.setFillColor(sf::Color(99, 79, 23, 255));
 	}
 
 	bumperCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_bumper01);
@@ -64,7 +64,7 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 		inverseRadCheck(t_ball, leadingPointOfBall, normalisedDir, m_table.m_roundedTopBot);
 	}
 
-	if (m_table.m_gutterTeleportRect.contains(t_ball.getPositionCur()))
+	if(leadingPointOfBall.y > m_gutterHeight)
 	{
 		t_ball.reset();
 		t_ball.setInPlay(false);
@@ -77,7 +77,7 @@ void Collision::detect(Ball& t_ball, sf::Vector2i t_mouseCur)
 	}
 	
 
-	flipperCheck(t_ball, m_table.m_flipperTest, 300.0f, 240.0f);
+	flipperCheck(t_ball, m_table.m_flipperRigt, 300.0f, 240.0f, 260.0f, leadingPointOfBall, normalisedDir, m_table.m_roundedTopBot); // 260 <-flipper at rest
 	// flipperCheck(t_ball, m_table.m_flipperTest, 120.0f, 60.0f);
 }
 
@@ -164,27 +164,73 @@ void Collision::launch(Ball t_balls[4])
 	
 }
 
-void Collision::flipperCheck(Ball t_ball, sf::CircleShape& t_flipper, float t_max, float t_min)
+void Collision::setLeftFlipperActive(bool t_active)
 {
+	m_leftFlipperActive = t_active;
+}
+
+void Collision::setRigtFlipperActive(bool t_active)
+{
+	m_rigtFlipperActive = t_active;
+}
+
+void Collision::flipperCheck(Ball& t_ball, sf::CircleShape& t_flipper, float t_max, float t_min, float t_resting, sf::Vector2f t_leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_outerRing)//, bool t_active)
+{
+	m_render.visualDebugFlipper(t_ball, t_leadingPoint);
+
 	if (Hlp::v2fGetMagnitude(t_flipper.getPosition() - t_ball.getPositionCur()) < t_flipper.getRadius())
 	{
-		sf::Vector2f flipperToBallNormal = Hlp::v2fGetNormal(t_ball.getPositionCur() - t_flipper.getPosition());
+		
+
+		sf::Vector2f diffBetweenBallAndFlipper = t_ball.getPositionCur() - t_flipper.getPosition();
+		sf::Vector2f flipperToBallNormal = Hlp::v2fGetNormal(diffBetweenBallAndFlipper);
+		float flipperToBallMag = Hlp::v2fGetMagnitude(diffBetweenBallAndFlipper);
 
 		sf::Vector2f straightUp{ 0.0f, 1.0f };
 		float flipperAngleR = atan2(Hlp::v2fCrossProduct(straightUp, flipperToBallNormal), Hlp::v2fDotProduct(straightUp, flipperToBallNormal));
 		float flipperAngleD = flipperAngleR * 180.0f / static_cast<float>(M_PI);
 		flipperAngleD += 180.0f;
 
-		t_flipper.setFillColor(sf::Color::Cyan);
+		t_flipper.setFillColor(sf::Color(0, 255, 255, 100)); // sf::Color::Cyan);
+		// m_globals.scaleTimeCheck(-2.0f);
+		
 
 		if (flipperAngleD < t_max && flipperAngleD > t_min)
 		{
-			t_flipper.setFillColor(sf::Color::Green);
+			if (m_rigtFlipperActive)
+			{
+				t_flipper.setFillColor(sf::Color(255, 0, 0, 100)); // Red
+				sf::Vector2f lineBounce = diffBetweenBallAndFlipper;
+				lineBounce = Hlp::v2fPerpendicularAntiClockwise(lineBounce);
+				// t_ball.addForce(flipperToBallNormal, Hlp::v2fGetMagnitude(lineBounce * 10000.0f));
+				m_render.visualDebugBall(t_ball.getPositionCur(), lineBounce);
+				//m_render.m_window.draw(m_render.m_flippedBallTrajectory);#
+				//m_globals.scaleTimeCheck(2.0f);
+				// t_ball.redirect(lineBounce + straightUp);
+				//t_ball.addForce(straightUp + Hlp::v2fGetNormal(lineBounce), Hlp::v2fGetMagnitude(lineBounce * 10000.0f)); // (Hlp::v2fGetNormal(lineBounce), Hlp::v2fGetMagnitude(lineBounce * 100.0f));
+				t_ball.flipperImpact(lineBounce);
+			}
+			else
+			{
+				t_flipper.setFillColor(sf::Color(0, 255, 0, 100));// sf::Color::Green);
+				// m_globals.m_timeScalar = 0.01f;
+			}
+		}
+		
+		if (flipperAngleD < t_resting && flipperAngleD > t_min)
+		{
+			t_flipper.setFillColor(sf::Color(255, 0, 0, 100)); // Orange.
+
+			sf::Vector2f outerRingNormal = Hlp::v2fGetNormal(t_ball.getPositionCur() - t_outerRing.getPosition());
+
+			sf::Vector2f reflectionVec = Hlp::v2fReflect(t_normalisedDir, outerRingNormal);
+
+			t_ball.redirect(reflectionVec);
 		}
 	}
 	else
 	{
-		t_flipper.setFillColor(sf::Color(220, 220, 220, 255));
+		t_flipper.setFillColor(sf::Color(220, 220, 220, 100));
 	}
 }
 

@@ -56,7 +56,9 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.draw(m_table.m_launchBox);
 	m_window.draw(m_table.m_launchKicker);
 	// m_window.draw(m_table.m_noCollideLaunch);
-	m_window.draw(m_table.m_flipperRigt);
+	
+	
+	
 	m_window.draw(m_table.m_noCollideGutterA);
 	// m_window.draw(m_table.m_gutterTeleport); Not needed!
 	m_window.draw(m_table.m_launchWall);
@@ -72,8 +74,10 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	m_window.draw(m_ballLine);
 	m_window.draw(m_ballLineReflect);
 
-	m_window.draw(m_table.m_flipperVisualRigt);
-
+	//m_window.draw(m_table.m_flipperRigt);
+	// m_window.draw(m_table.m_flipperVisualRigt);
+	m_window.draw(m_table.m_flipRigt.m_flipperDetect);
+	m_window.draw(m_table.m_flipRigt.m_flipperVisual);
 
 	m_window.draw(m_flippedBallTrajectory);
 

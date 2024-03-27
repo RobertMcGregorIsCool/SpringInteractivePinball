@@ -7,6 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Globals.h"
+#include "Flipper.h"
 class Table
 {
 public:
@@ -50,5 +51,7 @@ public:
 
 	sf::CircleShape m_flipperRigt;
 	sf::CircleShape m_flipperLeft; // <<< WORKING ON THIS!
+
+	Flipper m_flipRigt{ false, 80.0f, sf::Vector2f(360.0f, 875.0f), 240.0f, 260.0f, 300.0f, m_roundedTopBot };
 };
 

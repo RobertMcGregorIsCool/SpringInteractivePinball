@@ -78,7 +78,7 @@ Table::Table()
 	m_flipperRigt.setOutlineThickness(1.0f);
 	m_flipperRigt.setPosition(360.0f, 875.0f); // Globals::WIDTH * 0.50f, Globals::HEIGHT * 0.80f);
 
-	m_flipperVisualRigt.setSize(sf::Vector2f(80.0f, 5.0f));
+	m_flipperVisualRigt.setSize(sf::Vector2f(80.0f, 15.0f));
 	m_flipperVisualRigt.setOrigin(m_flipperVisualRigt.getSize().x, m_flipperVisualRigt.getSize().y * 0.5f);
 	m_flipperVisualRigt.setFillColor(sf::Color::Magenta);
 	m_flipperVisualRigt.setPosition(360.0f, 875.0f);

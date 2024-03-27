@@ -1,3 +1,8 @@
+/// <summary>
+/// author Robert McGregor login: c00302210
+/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// </summary>
+
 #pragma once
 
 #include <iostream>

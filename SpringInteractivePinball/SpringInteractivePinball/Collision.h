@@ -22,7 +22,6 @@ public:
 
 	void detect(Ball& t_ball, sf::Vector2i t_mouseCur);
 	void boundsCheck(bool interior, Ball& t_ball, sf::Vector2f t_point, float top, float bottom, float left, float right);
-	void bumperCheck(Ball& t_ball, sf::Vector2f t_leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_bumper);
 	void inverseRadCheck(Ball& t_ball, sf::Vector2f t_leadingPoint, sf::Vector2f t_normalisedDir, sf::CircleShape& t_outerRing);
 	void launch(Ball t_balls[4]);
 	
@@ -31,8 +30,6 @@ public:
 	Table& m_table;
 	Render& m_render;
 	Globals& m_globals;
-
-
 
 	const float M_BUMPER_COLLISION_ADJUSTMENT = 16.0f;
 

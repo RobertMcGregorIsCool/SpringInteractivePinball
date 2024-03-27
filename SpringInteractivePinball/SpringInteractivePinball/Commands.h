@@ -11,6 +11,7 @@
 #include "Hlp.h"
 #include "Render.h"
 #include "Collision.h"
+#include "Globals.h"
 
 class Commands
 {
@@ -30,8 +31,9 @@ public:
 
 	Collision& m_col;
 	Table& m_table;
+	Globals& m_globals;
 
-	Commands(Collision& t_col, Table& t_table);
+	Commands(Collision& t_col, Table& t_table, Globals& t_globals);
 	~Commands();
 
 	void update(sf::Time t_deltaTime);
@@ -45,7 +47,7 @@ public:
 	void nudgeUp();
 	void rigtFlipDn();
 	void rigtFlipUp();
-	//void newBall();
+	void newBall();
 	void teleportBall(Ball& t_ball, sf::Vector2f t_mouseCur);
 };
 

@@ -12,10 +12,12 @@ public:
 	~Globals();
 
 	void scaleTimeCheck(float input);
-	
+
 	float m_timeScalar;
 
-	static const unsigned int WIDTH	= 600U;
-	static const unsigned int HEIGHT= 960U;
-};
+	int m_score = 0;
+	bool debug = false;
 
+	static const unsigned int WIDTH = 600U;
+	static const unsigned int HEIGHT = 960U;
+};

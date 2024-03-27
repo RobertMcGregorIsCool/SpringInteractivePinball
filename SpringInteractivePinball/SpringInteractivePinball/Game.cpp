@@ -115,13 +115,11 @@ void Game::processKeysDn(sf::Event t_event)
 	}
 	
 	if ((sf::Keyboard::LShift == t_event.key.code || sf::Keyboard::Left == t_event.key.code) && !m_cmds.m_pressedLeftFlip)
-	{// SO NOW - Do some bools to prevent the key repeating!!
-		//m_globals.scaleTimeCheck(2.0f);
+	{
 		m_cmds.leftFlipDn();
 	}
 	if ((sf::Keyboard::RShift == t_event.key.code || sf::Keyboard::Right == t_event.key.code) && !m_cmds.m_pressedRigtFlip)
 	{
-		//m_globals.scaleTimeCheck(2.0f);
 		m_cmds.rigtFlipDn();
 	}
 	if ((sf::Keyboard::Up == t_event.key.code && !m_cmds.m_pressedLaunch))
@@ -141,10 +139,10 @@ void Game::processKeysDn(sf::Event t_event)
 	{
 		m_cmds.launchDn();
 	}
-	/*if (sf::Keyboard::Return == t_event.key.code)
+	if (sf::Keyboard::Return == t_event.key.code)
 	{
 		m_cmds.newBall();
-	}*/
+	}
 	if (sf::Keyboard::T == t_event.key.code)
 	{
 		for (int i = 0; i < m_ballsCurAmount; i++)
@@ -157,13 +155,13 @@ void Game::processKeysDn(sf::Event t_event)
 void Game::processKeysUp(sf::Event t_event)
 {
 	if ((sf::Keyboard::LShift == t_event.key.code || sf::Keyboard::Left == t_event.key.code) && m_cmds.m_pressedLeftFlip)
-	{// SO NOW - Do some bools to prevent the key repeating!!
-		m_globals.scaleTimeCheck(2.0f);
+	{
+		m_render.tableKick();
 		m_cmds.leftFlipUp();
 	}
 	if ((sf::Keyboard::RShift == t_event.key.code || sf::Keyboard::Right == t_event.key.code) && m_cmds.m_pressedRigtFlip)
 	{
-		m_globals.scaleTimeCheck(2.0f);
+		m_render.tableKick();
 		m_cmds.rigtFlipUp();
 	}
 	if (sf::Keyboard::Space == t_event.key.code)
@@ -218,19 +216,18 @@ void Game::processMouseUp(sf::Event t_event)
 	
 	std::cout << "Displacement is " << Hlp::v2fGetMagnitude(displacement) << ".\n\n";
 
-	//if (m_cmds.M_NUDGE_THRESHOLD < Hlp::v2fGetMagnitude(displacement))
-	//{
-	//	m_render.tableKick();
+	if (m_cmds.M_NUDGE_THRESHOLD < Hlp::v2fGetMagnitude(displacement))
+	{
+		m_render.tableKick();
 
 		for (int i = 0; i < m_ballsCurAmount; i++)
 		{
 			m_balls[i].addForce(Hlp::v2fGetNormal(displacement), Hlp::v2fGetMagnitude(displacement));
 		}
-	//}
+	}
 
-	// std::cout << displacement.x << "-" << displacement.y << "\n";
-
-	/*float headingD;
+	/* Bunch of this code originally derived from Pete's Aircrash, this here for reference
+	float headingD;
 	float headingR;	
 	headingR = std::atan2f(displacement.y, displacement.x);
 	headingD = headingR * 180.0f / M_PI;
@@ -259,21 +256,31 @@ void Game::processMouseScroll(sf::Event t_event)
 {
 	if (t_event.mouseWheelScroll.delta > 0)
 	{
-		m_collision.setLaunchBoxScalarFromCommand(m_cmds.m_launchTimer);
-		m_cmds.m_launchTimer = 0.0f;
-		m_cmds.launchUp(m_balls);
-	}
-	else
-	{
-		if (m_cmds.m_launchTimer < m_cmds.M_LAUNCH_PERIOD)
+		if (m_globals.debug)
 		{
-			m_cmds.m_launchTimer += m_cmds.M_LAUNCH_WHEEL_INCREMENT;
+			m_collision.setLaunchBoxScalarFromCommand(m_cmds.m_launchTimer);
+			m_cmds.m_launchTimer = 0.0f;
+			m_cmds.launchUp(m_balls);
 		}
 		else
 		{
-			m_cmds.m_launchTimer = m_cmds.M_LAUNCH_PERIOD;
+			m_collision.setLaunchBoxScalarFromCommand(1.0f);
+			m_cmds.launchUp(m_balls);
 		}
-		
+	}
+	else
+	{
+		if (m_globals.debug)
+		{
+			if (m_cmds.m_launchTimer < m_cmds.M_LAUNCH_PERIOD)
+			{
+				m_cmds.m_launchTimer += m_cmds.M_LAUNCH_WHEEL_INCREMENT;
+			}
+			else
+			{
+				m_cmds.m_launchTimer = m_cmds.M_LAUNCH_PERIOD;
+			}
+		}
 	}
 }
 
@@ -305,15 +312,15 @@ void Game::update(sf::Time t_deltaTime)
 		m_balls[i].setPosition(m_balls[i].m_positionNxt);
 	}
 
-	// m_render.visualDebugLines(m_mouseCur);
+	if (m_globals.debug)
+	{
+		m_render.visualDebugLines(m_mouseCur);
+	}
 
 	m_render.screenSettle(t_deltaTime);
 
 	m_cmds.update(t_deltaTime);
 }
-
-
-
 
 /// <summary>
 /// draw the frame and then switch buffers
@@ -362,16 +369,22 @@ void Game::setupSprite()
 
 void Game::updateScoreBoard()
 {
-	if (m_mouseCur.x >= 0 && m_mouseCur.x <= Globals::WIDTH && m_mouseCur.x >= 0 && m_mouseCur.y <= Globals::HEIGHT)
+	if (m_globals.debug)
 	{
-		m_scoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
-			" | Mouse Y: " + std::to_string(m_mouseCur.y) +
-			"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
-			" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)) + //);// +
-			//"\nMouseVec: " + std::to_string(m_testVec02.x) + " | " + std::to_string(m_testVec02.y));
-			"\nBall veloc: " + std::to_string(m_balls[0].getVelocity().x) + " | " + std::to_string(m_balls[0].getVelocity().y) +
-			"\nMX: " + std::to_string(sf::Mouse::getPosition(m_window).x) + " | MY: " + std::to_string(sf::Mouse::getPosition(m_window).y) +
-			"\nTime Scalar is: " + std::to_string(m_globals.m_timeScalar));
+		if (m_mouseCur.x >= 0 && m_mouseCur.x <= Globals::WIDTH && m_mouseCur.x >= 0 && m_mouseCur.y <= Globals::HEIGHT)
+		{
+			m_scoreBoard.setString("Mouse X: " + std::to_string(m_mouseCur.x) +
+				" | Mouse Y: " + std::to_string(m_mouseCur.y) +
+				"\nBall X: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.x)) +
+				" | Ball Y: " + std::to_string(static_cast<int>(m_balls[0].m_positionNxt.y)) +
+				"\nBall veloc: " + std::to_string(m_balls[0].getVelocity().x) + " | " + std::to_string(m_balls[0].getVelocity().y) +
+				"\nMX: " + std::to_string(sf::Mouse::getPosition(m_window).x) + " | MY: " + std::to_string(sf::Mouse::getPosition(m_window).y) +
+				"\nTime Scalar is: " + std::to_string(m_globals.m_timeScalar));
+		}
 	}
+	else
+	{
+		m_scoreBoard.setString("SCORE: " + std::to_string(m_globals.m_score));
+	}	
 }
 

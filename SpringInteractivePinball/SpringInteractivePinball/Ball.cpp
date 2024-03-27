@@ -71,7 +71,7 @@ void Ball::setPosition(sf::Vector2f newPosition)
 		}
 
 		m_ballShape.setPosition(newPosition);
-		// Sprite.setPosition(newPosition) will go here soon.
+		// Sprite.setPosition(newPosition) will go here soon. (But it never did)
 	}
 }
 
@@ -106,10 +106,3 @@ void Ball::reset()
 {
 	teleport(M_POS_START);
 }
-
-
-
-
-
-
-

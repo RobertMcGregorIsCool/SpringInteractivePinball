@@ -55,7 +55,6 @@ float Hlp::v2fCrossProduct(sf::Vector2f a, sf::Vector2f b)
 
 float Hlp::v2fDotProduct(sf::Vector2f lhs, sf::Vector2f rhs)
 {
-	// return v2fGetMagnitude(lhs) * v2fGetMagnitude(rhs) * cos(v2fCrossProduct(lhs,rhs));
 	return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 

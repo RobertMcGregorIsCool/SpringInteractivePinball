@@ -5,7 +5,7 @@
 
 #include "Commands.h"
 
-Commands::Commands(Collision& t_col, Table& t_table) : m_col{t_col}, m_table{t_table}
+Commands::Commands(Collision& t_col, Table& t_table, Globals& t_globals) : m_col{ t_col }, m_table{ t_table }, m_globals{ t_globals }
 {
 }
 
@@ -45,15 +45,15 @@ void Commands::launchUp(Ball t_balls[4])
 void Commands::leftFlipDn()
 {// Change collisions
 	m_pressedLeftFlip = true;
-	//m_col.setLeftFlipperActive(m_pressedLeftFlip);
-	
+	m_table.m_flipLeft.setFlipperPressed(m_pressedLeftFlip);
+	m_table.m_flipLeftHigh.setFlipperPressed(m_pressedLeftFlip);
 }
 
 void Commands::leftFlipUp()
 {
 	m_pressedLeftFlip = false;
-	//m_col.setLeftFlipperActive(m_pressedLeftFlip);
-	
+	m_table.m_flipLeft.setFlipperPressed(m_pressedLeftFlip);
+	m_table.m_flipLeftHigh.setFlipperPressed(m_pressedLeftFlip);
 }
 
 void Commands::nudgeDn(Ball t_ball)
@@ -62,10 +62,7 @@ void Commands::nudgeDn(Ball t_ball)
 	t_ball.addForce(sf::Vector2f(0.0f, -1.0f), M_NUDGE_THRESHOLD * 8.0f); // Hlp::v2fGetNormal(t_ball.getVelocity()), M_NUDGE_THRESHOLD);
 }
 
-void Commands::nudgeUp()
-{
-
-}
+void Commands::nudgeUp(){}
 
 void Commands::rigtFlipDn()
 {// Change collisions
@@ -85,7 +82,16 @@ void Commands::teleportBall(Ball& t_ball, sf::Vector2f t_mouseCur)
 	t_ball.teleport(t_mouseCur);
 }
 
-//void Commands::newBall()
-//{// This probably needs to be in Game.
-//	std::cout << "Called 'new ball'.\n\n";
-//}
+void Commands::newBall()
+{// This probably needs to be in Game.
+
+	m_globals.debug = !m_globals.debug;
+	if (m_globals.debug)
+	{
+		m_globals.scaleTimeCheck(-0.85f);
+	}
+	else
+	{
+		m_globals.scaleTimeCheck(2.0f);
+	}
+}

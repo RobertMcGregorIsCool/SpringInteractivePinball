@@ -30,9 +30,7 @@ public:
 	/// </summary>
 	void run();
 
-private:
-	
-	
+private:	
 	void setup();
 	void setupFontAndText();
 	void setupScoreBoard();
@@ -42,8 +40,6 @@ private:
 	void render();
 
 	void update(sf::Time t_deltaTime);
-
-	
 
 	void processEvents();
 	void processKeysDn(sf::Event t_event);
@@ -60,13 +56,10 @@ private:
 	Table	m_table;
 	PinballAud m_pinballAudio;
 	sf::RenderWindow m_window; // main SFML window
-	Render m_render{ m_window, m_table, m_pinballAudio };
+	Render m_render{ m_window, m_table, m_pinballAudio, m_globals};
 	Collision m_collision{ m_table, m_render, m_globals};
-	Commands m_cmds{ m_collision, m_table };
+	Commands m_cmds{ m_collision, m_table, m_globals };
 
-
-
-	// sf::Font m_ArialBlackfont; // font used by message
 	sf::Font m_karnivorDigitFont; // font used by message
 	sf::Text m_scoreBoard;
 
@@ -81,11 +74,7 @@ private:
 	int m_ballsCurAmount = 1;
 	Ball m_balls[M_MAX_BALLS];
 
-	//float m_flipperTestPos = 0.0f;
-
-	bool m_exitGame; // control exiting game
-
-	
+	bool m_exitGame; // control exiting game	
 };
 #endif // !GAME_HPP
 

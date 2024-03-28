@@ -1,12 +1,12 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
-/// 
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// </summary>
 
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-//#include "Game.h"
 #include "Hlp.h"
 #include "Globals.h"
 
@@ -15,8 +15,8 @@ class Ball
 {
 public:
 	
-	sf::Vector2f m_positionNxt;
-	const float M_RADIUS = 16.0f;
+	sf::Vector2f m_positionNxt;	// Originally for collision test, should be excised.
+	const float M_RADIUS = 16.0f; // Ball radius
 
 	sf::CircleShape m_ballShape;
 	
@@ -31,9 +31,9 @@ public:
 	/// <param name="dir"></param>
 	/// <param name="speed"></param>
 	/// <returns></returns>
-	void addForce(sf::Vector2f t_dir, float t_speed);
+	void addForce(sf::Vector2f t_dir, float t_speed); // Preceding block comment is borked, just going to write 'em like this.
 
-	void redirect (sf::Vector2f t_dir);
+	void redirect (sf::Vector2f t_dir); // Will this show up elsewhere?
 
 	void flipperImpact(sf::Vector2f t_dir);
 

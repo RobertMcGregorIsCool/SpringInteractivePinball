@@ -1,11 +1,12 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
-/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// </summary>
 
 #pragma once
 
-static class Globals
+ class Globals
 {
 public:
 	Globals();
@@ -13,11 +14,14 @@ public:
 
 	void scaleTimeCheck(float input);
 
-	float m_timeScalar;
+	float m_timeScalar; // Used to scale deltaTime for slowmo
 
 	int m_score = 0;
 	bool debug = false;
 
+	/// <summary>
+	/// Game window resolution
+	/// </summary>
 	static const unsigned int WIDTH = 600U;
 	static const unsigned int HEIGHT = 960U;
 };

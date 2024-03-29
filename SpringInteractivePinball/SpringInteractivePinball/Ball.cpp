@@ -1,24 +1,25 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// 
+/// So, I did function comments in the .h file, but probably won't do that again.
 /// </summary>
 
 #include "Ball.h"
 
 Ball::Ball()
-{
+{/// Settin' stuff up.
 	m_ballShape.setFillColor(sf::Color(127, 127, 127, 255));
 	m_ballShape.setRadius(M_RADIUS);
 	m_ballShape.setPosition(M_POS_START);
 	m_ballShape.setOrigin(M_RADIUS, M_RADIUS);
 }
 
-Ball::~Ball()
-{
-}
+Ball::~Ball(){} /// Don't think we're using this as we're not doing memory managment, but why not?
 
 void Ball::addForce(sf::Vector2f t_dir, float t_speed)
-{
+{/// Me apeing Unity. Combines direction and speed into a velocity, clamps it for safety.
 	m_velocityCur += (t_dir * t_speed);
 	m_velocityCur = Hlp::v2fClamp(m_velocityMax, -m_velocityMax, m_velocityCur);
 }
@@ -43,7 +44,7 @@ void Ball::update(sf::Time t_deltaTime)
 
 		m_velocityCur *= M_FRICTION;
 
-		m_positionNxt = m_positionCur + (m_velocityCur * t_deltaTime.asSeconds());// Multiply this by deltatime?
+		m_positionNxt = m_positionCur + (m_velocityCur * t_deltaTime.asSeconds());
 	}
 }
 

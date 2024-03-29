@@ -1,10 +1,14 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
-/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// </summary>
 #include "PinballAud.h"
 #include <iostream>
 
+/// <summary>
+/// Loads content and preps for play
+/// </summary>
 PinballAud::PinballAud()
 {
 	if (!m_bufFlipperHit01.loadFromFile("ASSETS\\AUDIO\\EFFECTS\\FlipperHit01.wav")) std::cout << "Load fail FlipperHit01.wav\n";

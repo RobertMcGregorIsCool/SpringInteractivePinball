@@ -1,6 +1,15 @@
+/// <summary>
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
+/// </summary>
+
 #pragma once
 #include <SFML/Graphics.hpp>
 
+/// <summary>
+/// Class of helper functions
+/// </summary>
 class Hlp
 {
 public:

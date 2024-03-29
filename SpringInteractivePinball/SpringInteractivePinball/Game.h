@@ -1,5 +1,7 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
 /// </summary>
 #ifndef GAME_HPP
@@ -52,29 +54,31 @@ private:
 
 	const float M_NUDGE_SCALAR = 4.0f;
 
+	/// <summary>
+	/// Instances of important classes!
+	/// </summary>
 	Globals m_globals;
 	Table	m_table;
 	PinballAud m_pinballAudio;
-	sf::RenderWindow m_window; // main SFML window
+	sf::RenderWindow m_window; /// main SFML window
 	Render m_render{ m_window, m_table, m_pinballAudio, m_globals};
 	Collision m_collision{ m_table, m_render, m_globals};
 	Commands m_cmds{ m_collision, m_table, m_globals };
 
-	sf::Font m_karnivorDigitFont; // font used by message
+	sf::Font m_karnivorDigitFont; /// font used by message
 	sf::Text m_scoreBoard;
 
 	sf::Vector2i m_mouseCur;
 
-	sf::Vector2f m_mouseDown;//location of mouse down click
-	sf::Vector2f m_mouseUp; // Reluctantly have to use this, boo.
+	sf::Vector2f m_mouseDown;	///location of mouse down click
+	sf::Vector2f m_mouseUp;		/// Reluctantly have to use this, boo.
 
-	bool m_screenKicked = false;
+	bool m_screenKicked = false; /// Used to determine if the screen needs to be settled.
 	
 	static constexpr int M_MAX_BALLS{ 4 };
 	int m_ballsCurAmount = 1;
 	Ball m_balls[M_MAX_BALLS];
 
-	bool m_exitGame; // control exiting game	
+	bool m_exitGame; /// control exiting game	
 };
 #endif // !GAME_HPP
-

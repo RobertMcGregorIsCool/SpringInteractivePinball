@@ -1,6 +1,8 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
-/// 
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
+/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
 /// </summary>
 
 #include "Game.h"
@@ -152,6 +154,10 @@ void Game::processKeysDn(sf::Event t_event)
 	}
 }
 
+/// <summary>
+/// Deal with user releasing keys
+/// </summary>
+/// <param name="t_event">Current event</param>
 void Game::processKeysUp(sf::Event t_event)
 {
 	if ((sf::Keyboard::LShift == t_event.key.code || sf::Keyboard::Left == t_event.key.code) && m_cmds.m_pressedLeftFlip)
@@ -184,6 +190,10 @@ void Game::processKeysUp(sf::Event t_event)
 	}
 }
 
+/// <summary>
+/// Deal with user pressing mouse button(s)
+/// </summary>
+/// <param name="t_event">Current event</param>
 void Game::processMouseDown(sf::Event t_event)
 {
 	m_mouseDown.x = static_cast<float>(t_event.mouseButton.x);
@@ -205,12 +215,16 @@ void Game::processMouseDown(sf::Event t_event)
 	}
 }
 
+/// <summary>
+/// Deal with user releasing mouse button(s)
+/// </summary>
+/// <param name="t_event">Current event</param>
 void Game::processMouseUp(sf::Event t_event)
 {
 	m_mouseUp.x = static_cast<float>(t_event.mouseButton.x);
 	m_mouseUp.y = static_cast<float>(t_event.mouseButton.y);
 		
-	sf::Vector2f displacement; // Remember to ask about the word 'displacement'.
+	sf::Vector2f displacement;
 
 	displacement = (m_mouseDown - m_mouseUp) * M_NUDGE_SCALAR;
 	
@@ -226,20 +240,20 @@ void Game::processMouseUp(sf::Event t_event)
 		}
 	}
 
-	/* Bunch of this code originally derived from Pete's Aircrash, this here for reference
-	float headingD;
-	float headingR;	
-	headingR = std::atan2f(displacement.y, displacement.x);
-	headingD = headingR * 180.0f / M_PI;
-	headingD = headingD + 90.0f;*/
+	/// Bunch of this code originally derived from Pete's Aircrash, this here for reference
+	/// float headingD;
+	/// float headingR;	
+	/// headingR = std::atan2f(displacement.y, displacement.x);
+	/// headingD = headingR * 180.0f / M_PI;
+	/// headingD = headingD + 90.0f;
 
-	//if (sf::Mouse::Left == t_event.mouseButton.button)
-	//{
-		// m_bigPlaneVelocity = displacement / 100.0f;
-		
-		// m_bigHeading = headingD;
-		// m_bigPlaneSprite.setRotation(headingD);
-	//}
+	/// if (sf::Mouse::Left == t_event.mouseButton.button)
+	/// {
+	/// 	 m_bigPlaneVelocity = displacement / 100.0f;
+	/// 	
+	/// 	 m_bigHeading = headingD;
+	/// 	 m_bigPlaneSprite.setRotation(headingD);
+	/// }
 
 	if (m_cmds.m_pressedLeftFlip)
 	{
@@ -252,6 +266,10 @@ void Game::processMouseUp(sf::Event t_event)
 	}
 }
 
+/// <summary>
+/// Deal with user scrolling mouse wheel.
+/// </summary>
+/// <param name="t_event">Current event</param>
 void Game::processMouseScroll(sf::Event t_event)
 {
 	if (t_event.mouseWheelScroll.delta > 0)
@@ -330,6 +348,9 @@ void Game::render()
 	m_render.render(m_balls, m_scoreBoard);
 }
 
+/// <summary>
+/// Setup hud and general content - mostly unused as I don't have art assets
+/// </summary>
 void Game::setup()
 {
 	setupFontAndText(); // load font 
@@ -348,6 +369,9 @@ void Game::setupFontAndText()
 	}
 }
 
+/// <summary>
+/// Make scoreboard look nice and presentable
+/// </summary>
 void Game::setupScoreBoard()
 {
 	m_scoreBoard.setFont(m_karnivorDigitFont);
@@ -364,9 +388,12 @@ void Game::setupScoreBoard()
 /// </summary>
 void Game::setupSprite() 
 {
-
+	// Really wish I had art assets to put in here.
 }
 
+/// <summary>
+/// Update and display the scores or debug information
+/// </summary>
 void Game::updateScoreBoard()
 {
 	if (m_globals.debug)

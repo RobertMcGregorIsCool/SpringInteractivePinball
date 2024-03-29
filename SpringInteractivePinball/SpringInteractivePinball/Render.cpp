@@ -1,6 +1,7 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
-/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// </summary>
 #include <iostream>
 
@@ -17,9 +18,9 @@ Render::Render(sf::RenderWindow& t_window, Table& t_table, PinballAud& t_pinball
 		std::cout << "Load fail partyland.gif \n\n";
 	}
 
-	m_backgroundImage.setOutlineColor(sf::Color(26, 32, 39, 200)); // (sf::Color::Magenta);
-	// m_backgroundImage.setTexture(&m_texPartyLand);
-	m_backgroundImage.setFillColor(sf::Color(41, 51, 61, 255)); // (sf::Color::White);
+	m_backgroundImage.setOutlineColor(sf::Color(26, 32, 39, 200));
+	/// m_backgroundImage.setTexture(&m_texPartyLand); Might reuse this if I polish the project.
+	m_backgroundImage.setFillColor(sf::Color(41, 51, 61, 255));
 	m_backgroundImage.setOutlineThickness(m_backgroundImageThickness);
 	m_backgroundImage.setSize(sf::Vector2f(Globals::WIDTH, Globals::HEIGHT));
 	m_backgroundImage.setOrigin(sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f));
@@ -49,7 +50,11 @@ Render::Render(sf::RenderWindow& t_window, Table& t_table, PinballAud& t_pinball
 }
 
 Render::~Render(){}
-
+/// <summary>
+/// Render the game
+/// </summary>
+/// <param name="t_balls">Current ball in the Balls array</param>
+/// <param name="t_scoreBoard"></param>
 void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 {
 	if (!m_globals.debug)
@@ -107,6 +112,10 @@ void Render::render(Ball t_balls[4], sf::Text t_scoreBoard)
 	}
 }
 
+/// <summary>
+/// Provide feedback through screenshake
+/// </summary>
+/// <param name="scalar">How much kick</param>
 void Render::tableKick(float scalar)
 {
 	float moveRandom = static_cast<float>(Hlp::randomRange(50.0f, -50.0f) * scalar);
@@ -128,6 +137,11 @@ void Render::tableKick(float scalar)
 	m_pinballAud.m_sndRattle.play();
 }
 
+/// <summary>
+/// Called from Game in Update if the screen is not settled.
+/// </summary>
+/// <param name="t_deltaTime">Delta time</param>
+/// <returns>If settled true, else continue to settle</returns>
 bool Render::screenSettle(sf::Time t_deltaTime)
 {
 	if (m_view.getCenter() == sf::Vector2f(Globals::WIDTH * 0.5f, Globals::HEIGHT * 0.5f) && m_view.getRotation() == 0.0f && m_view.getSize() == sf::Vector2f(Globals::WIDTH, Globals::HEIGHT))
@@ -145,6 +159,10 @@ bool Render::screenSettle(sf::Time t_deltaTime)
 	}
 }
 
+/// <summary>
+/// Lines to help plan trajectories - for debugging
+/// </summary>
+/// <param name="t_mouseCur">Current position of mouse cursor in pixels</param>
 void Render::visualDebugLines(sf::Vector2i t_mouseCur)
 {
 	sf::Vector2f m_mouseCurFloat = sf::Vector2f(static_cast<float>(t_mouseCur.x), static_cast<float>(t_mouseCur.y));

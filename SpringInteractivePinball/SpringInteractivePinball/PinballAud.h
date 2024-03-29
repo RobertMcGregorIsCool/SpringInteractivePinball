@@ -58,12 +58,9 @@ public:
 	sf::Music m_musHardRock;
 	sf::Music m_musDontStop;
 
-	//void setupAud();
-
 	PinballAud();
 
 	~PinballAud();
 
 private:
 };
-

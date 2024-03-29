@@ -1,8 +1,0 @@
-This is a file that will be deleted by the end of the project.
-It will only be used to track how long different parts took to do.
-
-08/03/24
-
-Moving Ball with Inverse Aircrash:
-- Estimated 30 min. Start 15:22
--

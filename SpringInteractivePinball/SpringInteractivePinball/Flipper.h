@@ -1,7 +1,9 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
-/// https://playold.games/play-game/pinball-fantasies/play/ - Party Land is 320x576
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// </summary>
+
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Globals.h"
@@ -10,6 +12,10 @@
 #define _USE_MATH_DEFINES	// Ehh, why not.
 #include <math.h>			// Go the whole hog. Be bigger than god.
 
+/// <summary>
+/// Flipper collision calcs moved into their own class so it can be
+/// instantiated around the table.
+/// </summary>
 class Flipper
 {// Private stuff goes here.
 	bool m_flipperPressed = false;
@@ -29,14 +35,14 @@ public:
 	sf::Vector2f getPosition();
 	float getRadius();
 
-	sf::CircleShape		m_flipperDetect;
-	sf::RectangleShape	m_flipperVisual;
-	sf::CircleShape		m_outerRing;
+	sf::CircleShape		m_flipperDetect;	/// Debug visual representation and data structure for radial collision with ball(s)
+	sf::RectangleShape	m_flipperVisual;	/// Visual representation of flipper - has no physical interaction
+	sf::CircleShape		m_outerRing;		/// Table curved surface, used with offset to allow ball interact with flipper at rest
 
-	bool				m_pointingRigt = false;
+	bool				m_pointingRigt = false; /// Flag to change calculations/visuals depending on flipper facing
 
-	float				m_angleBottom;
-	float				m_angleAtRest;
-	float				m_angleTop;
+	float				m_angleBottom;		/// Bottom of detection zone for flipper
+	float				m_angleAtRest;		/// Angle for flipper at rest
+	float				m_angleTop;			/// Top of detection zone for flipper
 };
 

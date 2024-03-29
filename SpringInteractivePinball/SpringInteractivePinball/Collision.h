@@ -27,19 +27,21 @@ public:
 	
 	void setLaunchBoxScalarFromCommand(float t_scalar);
 
-	Table& m_table;
-	Render& m_render;
-	Globals& m_globals;
+	Table&		m_table;	/// Local reference to table layout.
+	Render&		m_render;	/// Local reference to renderer class.
+	Globals&	m_globals;	/// Local reference yada globals.
 
-	const float M_BUMPER_COLLISION_ADJUSTMENT = 16.0f;
+	const float M_OUTERRING_COLLISION_ADJUSTMENT = 16.0f; /// Allows a little outerring interpenetration.
 
-	const float M_LAUNCH_KICKER_FORCE = 100.0f;
+	const float M_LAUNCH_KICKER_FORCE = 100.0f; /// Applied to ball at top of launch box, randomly scaled 0-1, left or right.
 
 private:	
 
-	float m_gutterHeight = 930.0f;
+	const int M_SCORE_INCREMENT = 200;
 
-	float m_launchBoxScalarFromCommand = 1.0f;
+	float m_gutterHeight = 930.0f; /// If ball passes this height and not in 'no collide' Rect, it's taken out of play and teleported to the start point.
+
+	float m_launchBoxScalarFromCommand = 1.0f; /// Used by unfinished plunger system to knock ball into play with varying force.
 	
 };
 

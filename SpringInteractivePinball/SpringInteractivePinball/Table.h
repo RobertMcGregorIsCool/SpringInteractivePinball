@@ -1,6 +1,7 @@
 /// <summary>
-/// author Robert McGregor login: c00302210
-/// 
+/// Author: Robert McGregor login: c00302210
+/// Purpose: Data for pinballs.
+/// Date: 28/03/24	Version: 0.1
 /// </summary>
 
 #pragma once
